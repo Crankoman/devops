@@ -16,3 +16,5 @@ second
 
 Все файлы с названием '.terraformrc' на любом уровне вложенности в каталоге 'terraform/' - .terraformrc
 Все файлы с названием 'terraform.rc' на любом уровне вложенности в каталоге 'terraform/' - terraform.rc
+
+Изменения для коммита из IDE
