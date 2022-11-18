@@ -35,12 +35,12 @@ VRAM - 4 MB
 <-  ***Нет***, Argument list too long ограничение на размер массива параметров, определяется в ARG_MAX.
 ## 8. В man bash поищите по /\[\[. Что делает конструкция [[ -d /tmp ]]
 <- 
-Речь о механизме условных выражений c поддержкой регулярных выражений CONDITIONAL EXPRESSIONS. ***-d*** - проверка существования папки в примере проверка существование папки ***/tmp*** 
+Речь о механизме условных выражений c поддержкой регулярных выражений CONDITIONAL EXPRESSIONS. ***-d*** - проверка существования папки в примере проверка существование папки ***/tmp*** в случае существования 
     
-    vagrant@vagrant:~$ if [[ -d /tmp1 ]]; then echo "ok"; else echo "not ok"; fi
-    not ok
-    vagrant@vagrant:~$ if [[ -d /tmp ]]; then echo "ok"; else echo "not ok"; fi
-    ok
+    if [[ -d /tmp ]]; then echo $?; else echo $?; fi
+    0 (true)
+    if [[ -d /tmp1 ]]; then echo $?; else echo $?; fi
+    1 (false)
 ## 9. Сделайте так, чтобы в выводе команды type -a bash первым стояла запись с нестандартным путем, например bash is ... Используйте знания о просмотре существующих и создании новых переменных окружения, обратите внимание на переменную окружения PATH
     bash is /tmp/new_path_directory/bash
     bash is /usr/local/bin/bash
