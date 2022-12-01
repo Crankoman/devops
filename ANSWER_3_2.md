@@ -38,6 +38,65 @@ ps -p 1
 
       PID TTY TIME     CMD
       1   ?   00:00:01 systemd
+Проверяем 
+
+pstree -p
+systemd(1)─┬─ModemManager(841)─┬─{ModemManager}(873)
+           │                   └─{ModemManager}(876)
+           ├─VBoxService(831)─┬─{VBoxService}(833)
+           │                  ├─{VBoxService}(834)
+           │                  ├─{VBoxService}(835)
+           │                  ├─{VBoxService}(836)
+           │                  ├─{VBoxService}(837)
+           │                  ├─{VBoxService}(838)
+           │                  ├─{VBoxService}(839)
+           │                  └─{VBoxService}(840)
+           ├─accounts-daemon(644)─┬─{accounts-daemon}(654)
+           │                      └─{accounts-daemon}(767)
+           ├─agetty(689)
+           ├─atd(691)
+           ├─cron(684)
+           ├─dbus-daemon(645)
+           ├─irqbalance(653)───{irqbalance}(661)
+           ├─multipathd(535)─┬─{multipathd}(536)
+           │                 ├─{multipathd}(537)
+           │                 ├─{multipathd}(538)
+           │                 ├─{multipathd}(539)
+           │                 ├─{multipathd}(540)
+           │                 └─{multipathd}(541)
+           ├─networkd-dispat(655)
+           ├─polkitd(656)─┬─{polkitd}(658)
+           │              └─{polkitd}(768)
+           ├─rsyslogd(660)─┬─{rsyslogd}(692)
+           │               ├─{rsyslogd}(693)
+           │               └─{rsyslogd}(694)
+           ├─snapd(1652)─┬─{snapd}(1671)
+           │             ├─{snapd}(1672)
+           │             ├─{snapd}(1673)
+           │             ├─{snapd}(1674)
+           │             ├─{snapd}(1675)
+           │             ├─{snapd}(1687)
+           │             ├─{snapd}(1689)
+           │             ├─{snapd}(1690)
+           │             ├─{snapd}(1737)
+           │             ├─{snapd}(1739)
+           │             └─{snapd}(2026)
+           ├─sshd(736)─┬─sshd(2618)───sshd(2666)───bash(2667)
+           │           ├─sshd(2877)───sshd(2917)───bash(2918)
+           │           ├─sshd(2931)───sshd(2971)───bash(2972)
+           │           ├─sshd(2983)───sshd(3023)───bash(3024)───man(3033)───pager(3043)
+           │           ├─sshd(3050)───sshd(3090)───bash(3091)───cat(3224)
+           │           └─sshd(3225)───sshd(3265)───bash(3266)───pstree(3280)
+           ├─systemd(2630)───(sd-pam)(2632)
+           ├─systemd-journal(354)
+           ├─systemd-logind(671)
+           ├─systemd-network(627)
+           ├─systemd-resolve(629)
+           ├─systemd-udevd(388)
+           └─udisksd(672)─┬─{udisksd}(695)
+                          ├─{udisksd}(769)
+                          ├─{udisksd}(842)
+                          └─{udisksd}(869)
 
 ------  
 
@@ -54,7 +113,11 @@ ps -p 1
 
 <-
 Да
-/et
+
+cat </etc/issue > /tmp/test.out
+Проверяем
+cat /tmp/test.out
+Ubuntu 20.04.4 LTS \n \l
 
 
 ------  
