@@ -40,64 +40,67 @@ ps -p 1
       1   ?   00:00:01 systemd
 Проверяем 
 
-pstree -p
-systemd(1)─┬─ModemManager(841)─┬─{ModemManager}(873)
-           │                   └─{ModemManager}(876)
-           ├─VBoxService(831)─┬─{VBoxService}(833)
-           │                  ├─{VBoxService}(834)
-           │                  ├─{VBoxService}(835)
-           │                  ├─{VBoxService}(836)
-           │                  ├─{VBoxService}(837)
-           │                  ├─{VBoxService}(838)
-           │                  ├─{VBoxService}(839)
-           │                  └─{VBoxService}(840)
-           ├─accounts-daemon(644)─┬─{accounts-daemon}(654)
-           │                      └─{accounts-daemon}(767)
-           ├─agetty(689)
-           ├─atd(691)
-           ├─cron(684)
-           ├─dbus-daemon(645)
-           ├─irqbalance(653)───{irqbalance}(661)
-           ├─multipathd(535)─┬─{multipathd}(536)
-           │                 ├─{multipathd}(537)
-           │                 ├─{multipathd}(538)
-           │                 ├─{multipathd}(539)
-           │                 ├─{multipathd}(540)
-           │                 └─{multipathd}(541)
-           ├─networkd-dispat(655)
-           ├─polkitd(656)─┬─{polkitd}(658)
-           │              └─{polkitd}(768)
-           ├─rsyslogd(660)─┬─{rsyslogd}(692)
-           │               ├─{rsyslogd}(693)
-           │               └─{rsyslogd}(694)
-           ├─snapd(1652)─┬─{snapd}(1671)
-           │             ├─{snapd}(1672)
-           │             ├─{snapd}(1673)
-           │             ├─{snapd}(1674)
-           │             ├─{snapd}(1675)
-           │             ├─{snapd}(1687)
-           │             ├─{snapd}(1689)
-           │             ├─{snapd}(1690)
-           │             ├─{snapd}(1737)
-           │             ├─{snapd}(1739)
-           │             └─{snapd}(2026)
-           ├─sshd(736)─┬─sshd(2618)───sshd(2666)───bash(2667)
-           │           ├─sshd(2877)───sshd(2917)───bash(2918)
-           │           ├─sshd(2931)───sshd(2971)───bash(2972)
-           │           ├─sshd(2983)───sshd(3023)───bash(3024)───man(3033)───pager(3043)
-           │           ├─sshd(3050)───sshd(3090)───bash(3091)───cat(3224)
-           │           └─sshd(3225)───sshd(3265)───bash(3266)───pstree(3280)
-           ├─systemd(2630)───(sd-pam)(2632)
-           ├─systemd-journal(354)
-           ├─systemd-logind(671)
-           ├─systemd-network(627)
-           ├─systemd-resolve(629)
-           ├─systemd-udevd(388)
-           └─udisksd(672)─┬─{udisksd}(695)
-                          ├─{udisksd}(769)
-                          ├─{udisksd}(842)
-                          └─{udisksd}(869)
+`pstree -p`
+<details>  
+<summary>подробнее</summary> 
 
+    systemd(1)─┬─ModemManager(841)─┬─{ModemManager}(873)
+               │                   └─{ModemManager}(876)
+               ├─VBoxService(831)─┬─{VBoxService}(833)
+               │                  ├─{VBoxService}(834)
+               │                  ├─{VBoxService}(835)
+               │                  ├─{VBoxService}(836)
+               │                  ├─{VBoxService}(837)
+               │                  ├─{VBoxService}(838)
+               │                  ├─{VBoxService}(839)
+               │                  └─{VBoxService}(840)
+               ├─accounts-daemon(644)─┬─{accounts-daemon}(654)
+               │                      └─{accounts-daemon}(767)
+               ├─agetty(689)
+               ├─atd(691)
+               ├─cron(684)
+               ├─dbus-daemon(645)
+               ├─irqbalance(653)───{irqbalance}(661)
+               ├─multipathd(535)─┬─{multipathd}(536)
+               │                 ├─{multipathd}(537)
+               │                 ├─{multipathd}(538)
+               │                 ├─{multipathd}(539)
+               │                 ├─{multipathd}(540)
+               │                 └─{multipathd}(541)
+               ├─networkd-dispat(655)
+               ├─polkitd(656)─┬─{polkitd}(658)
+               │              └─{polkitd}(768)
+               ├─rsyslogd(660)─┬─{rsyslogd}(692)
+               │               ├─{rsyslogd}(693)
+               │               └─{rsyslogd}(694)
+               ├─snapd(1652)─┬─{snapd}(1671)
+               │             ├─{snapd}(1672)
+               │             ├─{snapd}(1673)
+               │             ├─{snapd}(1674)
+               │             ├─{snapd}(1675)
+               │             ├─{snapd}(1687)
+               │             ├─{snapd}(1689)
+               │             ├─{snapd}(1690)
+               │             ├─{snapd}(1737)
+               │             ├─{snapd}(1739)
+               │             └─{snapd}(2026)
+               ├─sshd(736)─┬─sshd(2618)───sshd(2666)───bash(2667)
+               │           ├─sshd(2877)───sshd(2917)───bash(2918)
+               │           ├─sshd(2931)───sshd(2971)───bash(2972)
+               │           ├─sshd(2983)───sshd(3023)───bash(3024)───man(3033)───pager(3043)
+               │           ├─sshd(3050)───sshd(3090)───bash(3091)───cat(3224)
+               │           └─sshd(3225)───sshd(3265)───bash(3266)───pstree(3280)
+               ├─systemd(2630)───(sd-pam)(2632)
+               ├─systemd-journal(354)
+               ├─systemd-logind(671)
+               ├─systemd-network(627)
+               ├─systemd-resolve(629)
+               ├─systemd-udevd(388)
+               └─udisksd(672)─┬─{udisksd}(695)
+                              ├─{udisksd}(769)
+                              ├─{udisksd}(842)
+                              └─{udisksd}(869)
+</details>
 ------  
 
 ## 4. Как будет выглядеть команда, которая перенаправит вывод stderr ls на другую сессию терминала?
@@ -105,7 +108,12 @@ systemd(1)─┬─ModemManager(841)─┬─{ModemManager}(873)
 <- 
 Укажем "%" что бы точно получить ошибку - `cannot access '%': No such file or directory`
 
-ответ `ls $ 2> `
+Сначала проверим какие сессии терминала есть с помощью `tty`
+
+    tty
+    /dev/pty0
+
+ответ `ls % 2> /dev/pty1`
 
 ------  
 
@@ -114,11 +122,12 @@ systemd(1)─┬─ModemManager(841)─┬─{ModemManager}(873)
 <-
 Да
 
-cat </etc/issue > /tmp/test.out
-Проверяем
-cat /tmp/test.out
-Ubuntu 20.04.4 LTS \n \l
+    cat </etc/issue > /tmp/test.out
 
+Проверяем
+
+    cat /tmp/test.out
+    Ubuntu 20.04.4 LTS \n \l
 
 ------  
 
@@ -126,6 +135,9 @@ Ubuntu 20.04.4 LTS \n \l
 ## 6. Получится ли, находясь в графическом режиме, вывести данные из PTY в какой-либо из эмуляторов TTY? Сможете ли вы наблюдать выводимые данные?
 
 <- 
+ДА
+
+echo 'test' > /dev/tty1
 
 ------  
 
@@ -134,12 +146,24 @@ Ubuntu 20.04.4 LTS \n \l
 
 <- 
 
+bash 5>&1 выполнит bash с fd 5 и направит его на stdout.
+
+echo netology > /proc/$$/fd/5 
+netology
+
+echo направит netology в fd 5 $$ = текущий [pid]
+
 ------  
 
 
 ## 8. Получится ли в качестве входного потока для pipe использовать только stderr команды, не потеряв при этом отображение stdout на pty?
 
 <- 
+Да
+
+    cat /tmp/dasdsfad 2>&1 1>/dev/pts/0 | grep file > test
+    cat test
+    cat: /tmp/dasdsfad: No such file or directory
 
 ------  
 
@@ -154,6 +178,7 @@ Ubuntu 20.04.4 LTS \n \l
 Параметр `e` выводим переменные после команды
 
 Похожий вывод дает также `env`
+
 ------  
 
 
@@ -204,9 +229,11 @@ vagrant@netology1:~$ ssh localhost 'tty'
 not a tty
 
 Почитайте, почему так происходит, и как изменить поведение.
-
+Rоманду на удаленном компьютере с помощью ssh, TTY не выделяется для удаленного сеансато позволяет передавать двоичные данные и правильной работы в скриптах.
 <- 
+Необходимо использовать параметр `-t`
 
+ssh -t localhost 'tty'`
 ------  
 
 
@@ -214,12 +241,16 @@ not a tty
 
 <- 
 
+Надо изнать pid процесса
+
+выпольнить `reptyr PID`
+
 ------  
 
 
 ## 14. sudo echo string > /root/new_file не даст выполнить перенаправление под обычным пользователем, так как перенаправлением занимается процесс shell'а, который запущен без sudo под вашим пользователем. Для решения данной проблемы можно использовать конструкцию echo string | sudo tee /root/new_file. Узнайте? что делает команда tee и почему в отличие от sudo echo команда с sudo tee будет работать.
 
 <- 
-
+sudo tee выводит и в stdout и одновременно в файл перенаправления не требуется и команда сразу выполняяется под root .
 ------  
 
