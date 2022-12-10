@@ -2,8 +2,9 @@
 ## 1. С помощью базового файла конфигурации запустите Ubuntu 20.04 в VirtualBox посредством Vagrant:
 <- 
 
-    https://app.vagrantup.com/bento/boxes/ubuntu-20.04/versions/202206.03.0/providers/download/virtualbox.box
-    vagrant box add "bento/ubuntu-20.04" "D:\downloads\ubuntu-20.04"
+    curl -LO https://app.vagrantup.com/bento/boxes/ubuntu-20.04/versions/202206.03.0/providers/download/virtualbox.box
+    mv virtualbox.box ubuntu-20.04
+    vagrant box add "bento/ubuntu-20.04" "c:\downloads\ubuntu-20.04"
     vagrant init
     vagrant up
 ## 2. Ознакомьтесь с графическим интерфейсом VirtualBox:
