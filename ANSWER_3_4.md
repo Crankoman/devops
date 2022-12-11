@@ -19,21 +19,111 @@
      sudo apt install golang-go
      go mod tidy
 Клонируем репозиторий node_exportern
-1. git clone https://github.com/prometheus/node_exporter.git
+    
+    git clone https://github.com/prometheus/node_exporter.git
 Собираем node_exporter из исходников
-2. cd node_exporter && make build
-создаем systemd unit-файл в с содержимым:
-`
+    
+    cd node_exporter && make build
 
+Копируем бинарник node_exporter 
+   
+    sudo cp node_exporter /usr/local/bin/node_exporter
 
+создаем systemd unit-файл /etc/systemd/system/node_exporter.service с содержимым:
 
+    [Unit]
+    # описание
+    Description=Node Exporter
+    # запускать после запска сети
+    After=network.target 
+    
+    [Service]
+    # тип простой
+    Type=simple 
+    # путь до бинарника, который запускаем
+    ExecStart=/usr/local/bin/node_exporter 
+    
+    [Install]
+    # каталог с именем multi-user.target.wants будет создан внутри /etc/systemd/system (если он еще не доступен), и внутри него будет размещена символическая ссылка на текущий модуль.
+    WantedBy=multi-user.target
 
-`
+Перезагружаем конфиг
 
-3. 
+    sudo systemctl daemon-reload
+
+Запускаем сервис
+
+    sudo systemctl start node_exporter
+
+Проверяем что сервис запустился 
+
+    vagrant@vagrant:~$ service node_exporter status
+    ● node_exporter.service - Node Exporter
+         Loaded: loaded (/etc/systemd/system/node_exporter.service; disabled; vendor preset: enabled)
+         Active: active (running) since Sun 2022-12-11 11:54:39 UTC; 13s ago
+       Main PID: 2096 (node_exporter)
+          Tasks: 7 (limit: 4653)
+         Memory: 3.1M
+         CGroup: /system.slice/node_exporter.service
+                 └─2096 /usr/local/bin/node_exporter
+
+Добавляем в автозапуск   
+
+    sudo systemctl enable node_exporter
+    Created symlink /etc/systemd/system/multi-user.target.wants/node_exporter.service → /etc/systemd/system/node_exporter.service.
+
+Проверяем что сервис поднялся
+
+<details>  
+<summary>подробнее</summary>
+
+    vagrant@vagrant:~$ sudo reboot
+    Connection to 127.0.0.1 closed by remote host.
+    Connection to 127.0.0.1 closed.
+    PS C:\Users\Crank\PycharmProjects\devops\vagrant> vagrant.exe ssh
+    Welcome to Ubuntu 20.04.5 LTS (GNU/Linux 5.4.0-135-generic x86_64)
+    
+     * Documentation:  https://help.ubuntu.com
+     * Management:     https://landscape.canonical.com
+     * Support:        https://ubuntu.com/advantage
+    
+      System information as of Sun 11 Dec 2022 11:58:24 AM UTC
+    
+      System load:  1.28               Processes:             150
+      Usage of /:   18.1% of 30.58GB   Users logged in:       0
+      Memory usage: 6%                 IPv4 address for eth0: 10.0.2.15
+      Swap usage:   0%
+    
+    
+    This system is built by the Bento project by Chef Software
+    More information can be found at https://github.com/chef/bento
+    Last login: Sun Dec 11 11:56:34 2022 from 10.0.2.2
+    vagrant@vagrant:~$ service node_exporter status
+    ● node_exporter.service - Node Exporter
+         Loaded: loaded (/etc/systemd/system/node_exporter.service; enabled; vendor preset: enabled)
+         Active: active (running) since Sun 2022-12-11 11:58:11 UTC; 17s ago
+       Main PID: 710 (node_exporter)
+          Tasks: 5 (limit: 4653)
+         Memory: 15.5M
+         CGroup: /system.slice/node_exporter.service
+                 └─710 /usr/local/bin/node_exporter
+</details>
+
+Все ОК
+
 ----
-## 2. Ознакомьтесь с опциями node_exporter и выводом `/metrics` по-умолчанию. Приведите несколько опций, которые вы бы выбрали для базового мониторинга хоста по CPU, памяти, диску и сети.
+## 2. Ознакомьтесь с опциями node_exporter и выводом `/metrics` по-умолчанию.
+Приведите несколько опций, которые вы бы выбрали для базового мониторинга хоста по CPU, памяти, диску и сети.
 <-
+Посмотреть результаты работы быстро можно через `curl http://localhost:9100/metrics` или в браузере пробросив порт 9100 на хостовую машину (надо добавить в конфиг vagrant `config.vm.network "forwarded_port", guest: 9100, host: 9100`)
+
+Посмотрим список всех метрик `curl http://localhost:9100/metrics | grep TYPE | sort`
+
+CPU - node_cpu_guest_seconds_total, node_cpu_seconds_total
+Память - node_memory_MemAvailable_bytes, node_memory_MemFree_bytes, node_memory_SwapFree_bytes
+Диск - node_disk_io_now, node_disk_io_time_seconds_total
+Сеть - node_network_receive_errs_total, node_network_transmit_errs_total, node_network_transmit_queue_length
+
 ----
 ## 3. Установите в свою виртуальную машину [Netdata](https://github.com/netdata/netdata). Воспользуйтесь [готовыми пакетами](https://packagecloud.io/netdata/netdata/install) для установки (`sudo apt install -y netdata`). 
    
@@ -47,6 +137,8 @@ sudo apt install -y netdata
 
     После успешной перезагрузки в браузере *на своем ПК* (не в виртуальной машине) вы должны суметь зайти на `localhost:19999`. Ознакомьтесь с метриками, которые по умолчанию собираются Netdata и с комментариями, которые даны к этим метрикам.
 <-
+Готово
+![](img/2022-12-11_20-24-52.png)
 
 
 ----
@@ -71,9 +163,28 @@ nr_open - лимит открытых файлов для каждого отд�
 ----
 ## 6. Запустите любой долгоживущий процесс (не `ls`, который отработает мгновенно, а, например, `sleep 1h`) в отдельном неймспейсе процессов; покажите, что ваш процесс работает под PID 1 через `nsenter`. Для простоты работайте в данном задании под root (`sudo -i`). Под обычным пользователем требуются дополнительные опции (`--map-root-user`) и т.д.
 <-
-Используем `unshare --fork --pid  sleep 1h`
+Выполняем `sudo -i`
 
+Далее запускаем процесс в отдельном namespace через nohup что бы освободить терминал ключи: --fork - разветвить указанную программу как дочерний процесс unshare, а не запускать ее напрямую , --pid -создать новый PID namespace --mount-proc - непосредственно перед запуском программы смонтируйте файловую систему proc в точке монтирования (по умолчанию /proc)
+`unshare --fork --pid --mount-proc nohup sleep 1h&`
 
+Проверяем что создался отдельный namespace через `lsns`, который выводит список всех namespace'ов и ищем там через `grep sleep`
+
+    root@vagrant:~# lsns | grep sleep
+    4026532192 mnt         2  1744 root            unshare --fork --pid --mount-proc nohup sleep 1h
+    4026532193 pid         4  1745 root            sleep 1h
+Видим его PID 1745
+
+Переходим в namespace PID 1745 через `nsenter`, ключи -t - указываем PID целевого процесса чей контекст хотим получить, -p - взять пространство имен PID целевого процесса, -m - взять пространство имен монтирования целевого процесса
+
+    root@vagrant:~# nsenter -t 1745 -p -m
+    root@vagrant:/# ps
+        PID TTY          TIME CMD
+          1 pts/0    00:00:00 sleep
+          2 pts/0    00:00:00 bash
+         13 pts/0    00:00:00 ps
+
+Видим PID 1 у процесса sleep
 
 ----
 ## 7. Найдите информацию о том, что такое `:(){ :|:& };:`. Запустите эту команду в своей виртуальной машине Vagrant с Ubuntu 20.04 (**это важно, поведение в других ОС не проверялось**). Некоторое время все будет "плохо", после чего (минуты) – ОС должна стабилизироваться. Вызов `dmesg` расскажет, какой механизм помог автоматической стабилизации.  
