@@ -40,8 +40,9 @@
     [Service]
     # тип простой
     Type=simple 
-    # путь до бинарника, который запускаем
-    ExecStart=/usr/local/bin/node_exporter 
+    EnvironmentFile=/etc/sysconfig/node_exporter
+    # путь до бинарника, который запускаем добавляем параметр запуска
+    ExecStart=/usr/local/bin/node_exporter $OPTIONS
     
     [Install]
     # каталог с именем multi-user.target.wants будет создан внутри /etc/systemd/system (если он еще не доступен), и внутри него будет размещена символическая ссылка на текущий модуль.
@@ -108,8 +109,25 @@
          CGroup: /system.slice/node_exporter.service
                  └─710 /usr/local/bin/node_exporter
 </details>
-
 Все ОК
+
+через `node_exporter -h` узнаем какие параметры запуска поддерживаются выбираем `--web.listen-address=:777` и добавляем это в конфигурационный файл /etc/sysconfig/node_exporter
+      
+    sudo mkdir sudo touch /etc/sysconfig/
+    sudo touch /etc/sysconfig/node_exporter
+    sudo echo 'OPTIONS="--web.listen-address=:777"' | sudo tee /etc/sysconfig/node_exporter
+    sudo systemctl daemon-reload
+    sudo service node_exporter restart
+    curl http://localhost:777
+    <html>
+                            <head><title>Node Exporter</title></head>
+                            <body>
+                            <h1>Node Exporter</h1>
+                            <p><a href="/metrics">Metrics</a></p>
+                            </body>
+                            </html>vagrant@vagrant:~/node_exporter$
+
+Запускаем сервис с параметрами из файла подключаемся к порту 777
 
 ----
 ## 2. Ознакомьтесь с опциями node_exporter и выводом `/metrics` по-умолчанию.
