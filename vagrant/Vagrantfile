@@ -1,26 +1,23 @@
-path_to_disk_folder = './disks'
+boxes = {
+  'netology1' => '10',
+  'netology2' => '60',
+  'netology3' => '90',
+}
 
-    host_params = {
-        'cpus'=>4,
-        'memory'=>4096,
-        'hostname'=>'sysadm-fs',
-        'vm_name'=>'sysadm-fs'
-    }
-    Vagrant.configure("2") do |config|
-        config.vm.box = "bento/ubuntu-20.04"
-        config.vm.hostname=host_params['hostname']
+Vagrant.configure("2") do |config|
+  config.vm.network "private_network", virtualbox__intnet: true, auto_config: false
+  config.vm.box = "bento/ubuntu-20.04"
 
-        config.vm.provider :virtualbox do |v|
-
-            v.name=host_params['vm_name']
-            v.cpus=host_params['cpus']
-            v.memory=host_params['memory']
-
-            v.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
-            v.customize ["modifyvm", :id, "--natdnsproxy1", "on"]
-
-        end
-        #config.vm.network "private_network", type: "dhcp"
-        config.vm.network "public_network", bridge: "Realtek RTL8852AE WiFi 6 802.11ax PCIe Adapter"
-        #config.vm.network "bridged"
+  boxes.each do |k, v|
+    config.vm.define k do |node|
+      node.vm.provision "shell" do |s|
+        s.inline = "hostname $1;"\
+          "ip addr add $2 dev eth1;"\
+          "ip link set dev eth1 up;"\
+          "apt -y install nginx;"
+        s.args = [k, "172.28.128.#{v}/24"]
+      end
     end
+  end
+
+end
