@@ -7,6 +7,8 @@ boxes = {
 Vagrant.configure("2") do |config|
   config.vm.network "private_network", virtualbox__intnet: true, auto_config: false
   config.vm.box = "bento/ubuntu-20.04"
+#  config.vm.customize ["modifyvm", :id, "--memory", 1024]
+#  config.vm.customize ["modifyvm", :id, "--cpus", 1]
 
   boxes.each do |k, v|
     config.vm.define k do |node|
