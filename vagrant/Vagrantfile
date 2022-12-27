@@ -7,8 +7,11 @@ boxes = {
 Vagrant.configure("2") do |config|
   config.vm.network "private_network", virtualbox__intnet: true, auto_config: false
   config.vm.box = "bento/ubuntu-20.04"
-#  config.vm.customize ["modifyvm", :id, "--memory", 1024]
-#  config.vm.customize ["modifyvm", :id, "--cpus", 1]
+  #config.vbguest.iso_path = "C:\Program Files\Oracle\VirtualBox\VBoxGuestAdditions.iso"
+  config.vm.provider "virtualbox" do |vb|
+     vb.memory = 512
+     vb.cpus = 1
+  end
 
   boxes.each do |k, v|
     config.vm.define k do |node|
