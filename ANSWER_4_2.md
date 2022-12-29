@@ -11,16 +11,47 @@ b = '2'
 c = a + b
 ```
 
-Вопросы:
-
-| Вопрос  | Ответ |
-| ------------- | ------------- |
-| Какое значение будет присвоено переменной `c`?  | ???  |
-| Как получить для переменной `c` значение 12?  | ???  |
-| Как получить для переменной `c` значение 3?  | ???  |   
 
 <-
+Вопросы:
+<table>
+<tr>
+<th>Вопрос</th><th>Ответ</th>
+</tr>
+<tr>
+<td>Какое значение будет присвоено переменной `c`?</td><td>Ошибка: TypeError: unsupported operand type(s) for +: 'int' and 'str'</td>
+</tr>
+<tr>
+<td>Как получить для переменной `c` значение 12?</td><td>
+конвертировать переменную `a` в строку 
 
+```python
+#!/usr/bin/env python3
+a = 1
+a = str(a)
+b = '2'
+c = a + b
+print(c)
+``` 
+Результат: 12
+</td>
+</tr>
+<tr>
+<td>Как получить для переменной `c` значение 3?</td><td>
+конвертировать переменную `b` в число 
+
+```python
+#!/usr/bin/env python3
+a = 1
+b = '2'
+b = int(b)
+c = a + b
+print(c)
+``` 
+Результат: 3
+</td>
+</tr> |   
+</table>
 
 ----
 
@@ -44,20 +75,38 @@ for result in result_os.split('\n'):
         print(prepare_result)
         break
 ```
+<-
 
-Ваш скрипт:
+Мой скрипт:
+
 ```python
-???
+#!/usr/bin/env python3
+
+import os
+
+# Выносим путь в отдельную переменную
+path = '~/netology/sysadm-homeworks'
+# Формируем полный путь с учетом домашней директории пользователя и переходим в нее
+os.chdir(os.path.expanduser(path))
+# Убираем блок отвечающий за переход в директорию
+bash_command = ["git status"]
+result_os = os.popen(' && '.join(bash_command)).read()
+is_change = False
+for result in result_os.split('\n'):
+    if result.find('modified') != -1:
+        # Добавляем в вывод полный путь до текущей папки и разделитель `/`
+        prepare_result = os.getcwd() + '/' + result.replace('\tmodified:   ', '')
+        print(prepare_result)
+        # Убираем вызов `break` который срабатывает сразу на первом проходе цикла
+        # break
+
 ```
 
 Вывод скрипта при запуске при тестировании:
-```
-???
-```
 
-<-
-
-
+    python3 test.py
+    /root/netology/sysadm-homeworks/01-intro-01/README.md
+    /root/netology/sysadm-homeworks/README.md
 
 ----
 
@@ -65,9 +114,47 @@ for result in result_os.split('\n'):
 
 Доработать скрипт выше так, чтобы он не только мог проверять локальный репозиторий в текущей директории, но и умел воспринимать путь к репозиторию, который мы передаём как входной параметр. Мы точно знаем, что начальство коварное и будет проверять работу этого скрипта в директориях, которые не являются локальными репозиториями.
 
+<-
+
 Ваш скрипт:
 ```python
-???
+#!/usr/bin/env python3
+
+import os
+import sys
+
+# Выносим путь в отдельную переменную
+# path = '~/netology/sysadm-homeworks'
+if len(sys.argv) > 1:
+    path = sys.argv[1]
+else:
+    path = input('Введите путь до директории и нажмите Enter:')
+
+# Формируем полный путь с учетом домашней директории пользователя и переходим в нее
+try:
+    os.chdir(os.path.expanduser(path))
+    print("Текущая директория - ", os.getcwd())
+except (FileNotFoundError, PermissionError, NotADirectoryError):
+    print("Не можем перейти в директорию, проверьте путь и права")
+
+# Убираем блок отвечающий за переход в директорию
+bash_command = ["git status"]
+result_os = os.popen(' && '.join(bash_command)).read()
+is_change = False
+for result in result_os.split('\n'):
+    if result.find('not a git repository') != -1:
+        print("Эта директория не содержит git репозиторий")
+        break
+
+    if result.find('nothing to commit') != -1:
+        print("Эта директория не содержит модифицированных файлов")
+        break
+
+    if result.find('modified') != -1:
+        # Добавляем в вывод полный путь до текущей папки и разделитель `/`
+        prepare_result = os.getcwd() + '/' + result.replace('\tmodified:   ', '')
+        print(prepare_result)
+        # Убираем вызов `break` который срабатывает сразу на первом проходе цикла
 ```
 
 Вывод скрипта при запуске при тестировании:
