@@ -89,8 +89,8 @@ path = '~/netology/sysadm-homeworks'
 # Формируем полный путь с учетом домашней директории пользователя и переходим в нее
 os.chdir(os.path.expanduser(path))
 # Убираем блок отвечающий за переход в директорию
-bash_command = ["git status"]
-result_os = os.popen(' && '.join(bash_command)).read()
+bash_command = "git status"
+result_os = os.popen(bash_command).read()
 is_change = False
 for result in result_os.split('\n'):
     if result.find('modified') != -1:
@@ -136,30 +136,38 @@ try:
     print("Текущая директория - ", os.getcwd())
 except (FileNotFoundError, PermissionError, NotADirectoryError):
     print("Не можем перейти в директорию, проверьте путь и права")
+    sys.exit(1)
+if not os.path.isdir('.git'):
+    print("Эта директория не содержит git репозиторий")
+    sys.exit(1)
 
-# Убираем блок отвечающий за переход в директорию
-bash_command = ["git status"]
-result_os = os.popen(' && '.join(bash_command)).read()
-is_change = False
+result_os = os.popen("git status").read()
+
 for result in result_os.split('\n'):
-    if result.find('not a git repository') != -1:
-        print("Эта директория не содержит git репозиторий")
-        break
-
     if result.find('nothing to commit') != -1:
         print("Эта директория не содержит модифицированных файлов")
         break
-
     if result.find('modified') != -1:
         # Добавляем в вывод полный путь до текущей папки и разделитель `/`
         prepare_result = os.getcwd() + '/' + result.replace('\tmodified:   ', '')
         print(prepare_result)
-        # Убираем вызов `break` который срабатывает сразу на первом проходе цикла
+
 ```
 
 Вывод скрипта при запуске при тестировании:
 ```
-???
+python3 test.py ~/netology/sysadm-homeworks/
+Текущая директория -  /root/netology/sysadm-homeworks
+/root/netology/sysadm-homeworks/01-intro-01/README.md
+/root/netology/sysadm-homeworks/README.md
+
+python3 test.py ~/netology
+Текущая директория -  /root/netology
+Эта директория не содержит git репозиторий
+
+python3 test.py ~/netology1
+Не можем перейти в директорию, проверьте путь и права
+
 ```
 
 <-
