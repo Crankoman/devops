@@ -123,27 +123,29 @@ for result in result_os.split('\n'):
 import os
 import sys
 
-# Выносим путь в отдельную переменную
-# path = '~/netology/sysadm-homeworks'
+# проверяем если параметры запуска, если нет просим их ввести
 if len(sys.argv) > 1:
     path = sys.argv[1]
 else:
     path = input('Введите путь до директории и нажмите Enter:')
 
-# Формируем полный путь с учетом домашней директории пользователя и переходим в нее
+# Проверяем можем ли перейти в данную директорию
 try:
     os.chdir(os.path.expanduser(path))
     print("Текущая директория - ", os.getcwd())
 except (FileNotFoundError, PermissionError, NotADirectoryError):
     print("Не можем перейти в директорию, проверьте путь и права")
-    sys.exit(1)
+    sys.exit()
+# Проверяем существует ли диретория `git`
 if not os.path.isdir('.git'):
     print("Эта директория не содержит git репозиторий")
-    sys.exit(1)
+    sys.exit()
 
+# пробуем выполнить `git status`
 result_os = os.popen("git status").read()
 
 for result in result_os.split('\n'):
+    # Проверяем вдруг нет не модифицированных файлов
     if result.find('nothing to commit') != -1:
         print("Эта директория не содержит модифицированных файлов")
         break
@@ -169,9 +171,6 @@ python3 test.py ~/netology1
 Не можем перейти в директорию, проверьте путь и права
 
 ```
-
-<-
-
 
 
 ----

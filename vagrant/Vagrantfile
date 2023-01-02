@@ -6,6 +6,7 @@ boxes = {
 
 Vagrant.configure("2") do |config|
   config.vm.network "private_network", virtualbox__intnet: true, auto_config: false
+  config.vm.network "public_network", bridge: "Realtek RTL8852AE WiFi 6 802.11ax PCIe Adapter"
   config.vm.box = "bento/ubuntu-20.04"
   #config.vbguest.iso_path = "C:\Program Files\Oracle\VirtualBox\VBoxGuestAdditions.iso"
   config.vm.provider "virtualbox" do |vb|
