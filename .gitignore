@@ -1,2 +1,4 @@
-vagrant/disk/*
-vagrant/.vagrant/*
+vagrant\disk\*
+vagrant\.vagrant\*
+.idea\*
+devops.imi
