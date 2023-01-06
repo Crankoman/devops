@@ -11,8 +11,8 @@ b = '2'
 c = a + b
 ```
 
-
 <-
+
 Вопросы:
 <table>
 <tr>
@@ -169,9 +169,7 @@ python3 test.py ~/netology
 
 python3 test.py ~/netology1
 Не можем перейти в директорию, проверьте путь и права
-
 ```
-
 
 ----
 
@@ -188,17 +186,80 @@ python3 test.py ~/netology1
 
 Также, должна быть реализована возможность проверки текущего IP сервиса c его IP из предыдущей проверки. Если проверка будет провалена - оповестить об этом в стандартный вывод сообщением: [ERROR] <URL сервиса> IP mismatch: <старый IP> <Новый IP>. Будем считать, что наша разработка реализовала сервисы: `drive.google.com`, `mail.google.com`, `google.com`.
 
+<-
+
 Ваш скрипт:
 ```python
-???
+#!/usr/bin/env python3
+
+import socket
+import urllib.request
+
+
+# Функция записи словаря в файл
+def save_dict_to_file(dic):
+    f = open('db.txt', 'w+')
+    f.write(str(dic))
+    f.close()
+
+
+# Функция чтения словаря из файла
+def load_dict_from_file():
+    f = open('db.txt', 'r+')
+    data = f.read()
+    # Проверяем если файл пустой, заполняем
+    if not data:
+        data = '{"null":"null"}'
+    f.close()
+    return eval(data)
+
+# Создаем список сервисов
+services = ['drive.google.com', 'mail.google.com', 'google.com']
+
+# Читаем данные из файла
+dict_data = load_dict_from_file()
+
+# Переменная для словаря
+new_dict_data = {}
+
+for service in services:
+    # проверяем доступность сервисов
+    if urllib.request.urlopen("https://" + service + "/").getcode() < 400:
+        # выводим список сервисов
+        ip = socket.gethostbyname(service)
+        print(f"<{service}> - <{ip}>")
+        # Сверяем с прошлым значением
+        if service in dict_data:
+            if not dict_data[service] == ip:
+                print(f"[ERROR] <{service}> IP mismatch: <{dict_data[service]}> <{ip}>")
+
+        # Заполняем справочник
+        new_dict_data[service] = ip
+
+    else:
+        print(f"Сервис {service} недоступен")
+
+# Записываем словарь с новыми данными в файл
+save_dict_to_file(new_dict_data)
 ```
 
 Вывод скрипта при запуске при тестировании:
 ```
-???
+<drive.google.com> - <173.194.220.194>
+<mail.google.com> - <64.233.161.17>
+<google.com> - <74.125.205.113>
+
+echo "{'drive.google.com': '1.1.1.1', 'mail.google.com': '1.1.1.1', 'google.com': '1.1.1.1'}" > db.txt
+
+<drive.google.com> - <74.125.205.194>
+[ERROR] <drive.google.com> IP mismatch: <1.1.1.1> <74.125.205.194>
+<mail.google.com> - <173.194.222.19>
+[ERROR] <mail.google.com> IP mismatch: <1.1.1.1> <173.194.222.19>
+<google.com> - <209.85.233.139>
+[ERROR] <google.com> IP mismatch: <1.1.1.1> <209.85.233.139>
 ```
 
-<-
+
 
 
 
@@ -206,7 +267,8 @@ python3 test.py ~/netology1
 
 ## 5. Задание 5 Дополнительное задание (со звездочкой*) - необязательно к выполнению
 
-Так получилось, что мы очень часто вносим правки в конфигурацию своей системы прямо на сервере. Но так как вся наша команда разработки держит файлы конфигурации в github и пользуется gitflow, то нам приходится каждый раз: 
+Так получилось, что мы очень часто вносим правки в конфигурацию своей системы прямо на сервере. 
+Но так как вся наша команда разработки держит файлы конфигурации в github и пользуется gitflow, то нам приходится каждый раз: 
 * переносить архив с нашими изменениями с сервера на наш локальный компьютер, 
 * формировать новую ветку, 
 * коммитить в неё изменения, 
@@ -221,6 +283,8 @@ python3 test.py ~/netology1
 
 Важно получить конечный результат с созданным PR, в котором применяются наши изменения. 
 
+<-
+
 Ваш скрипт:
 ```python
 ???
@@ -231,7 +295,6 @@ python3 test.py ~/netology1
 ```
 
 
-<-
 
 
 
