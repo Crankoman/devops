@@ -1,51 +1,37 @@
+#Так получилось, что мы очень часто вносим правки в конфигурацию своей системы прямо на сервере.
+#Но так как вся наша команда разработки держит файлы конфигурации в github и пользуется gitflow, то нам приходится каждый раз:
+#* переносить архив с нашими изменениями с сервера на наш локальный компьютер,
+#* формировать новую ветку,
+#* коммитить в неё изменения,
+#* создавать pull request (PR)
+#* и только после выполнения Merge мы наконец можем официально подтвердить, что новая конфигурация применена.
+#
+#Мы хотим максимально автоматизировать всю цепочку действий.
+#* Для этого нам нужно написать скрипт, который будет в директории с локальным репозиторием обращаться по API к github,
+# создавать PR для вливания текущей выбранной ветки в master с сообщением, которое мы вписываем в первый параметр при обращении
+# к py-файлу (сообщение не может быть пустым).
+#* При желании, можно добавить к указанному функционалу создание новой ветки, commit и push в неё изменений конфигурации.
+#* С директорией локального репозитория можно делать всё, что угодно.
+#* Также, принимаем во внимание, что Merge Conflict у нас отсутствуют и их точно не будет при push, как в свою ветку,
+# так и при слиянии в master.
+#
+#Важно получить конечный результат с созданным PR, в котором применяются наши изменения.
 #!/usr/bin/env python3
+import sys
+from github import Github
 
-import socket
-import urllib.request
-
-
-# Функция записи словаря в файл
-def save_dict_to_file(dic):
-    f = open('db.txt', 'w+')
-    f.write(str(dic))
-    f.close()
+repo_name = 'https://github.com/Crankoman/devops'
+def create_pr(text)
 
 
-# Функция чтения словаря из файла
-def load_dict_from_file():
-    f = open('db.txt', 'r+')
-    data = f.read()
-    # Проверяем если файл пустой, заполняем
-    if not data:
-        data = '{"null":"null"}'
-    f.close()
-    return eval(data)
+# проверяем если параметры запуска, если нет просим их ввести
+if len(sys.argv) > 1:
+    text = str(sys.argv[1])
+else:
+    print('введите текст сообщения ')
+    sys.exit()
+# Получаем список изменений
+result_os = os.popen("git status").read()
 
-# Создаем список сервисов
-services = ['drive.google.com', 'mail.google.com', 'google.com']
 
-# Читаем данные из файла
-dict_data = load_dict_from_file()
 
-# Переменная для словаря
-new_dict_data = {}
-
-for service in services:
-    # проверяем доступность сервисов
-    if urllib.request.urlopen("https://" + service + "/").getcode() < 400:
-        # выводим список сервисов
-        ip = socket.gethostbyname(service)
-        print(f"<{service}> - <{ip}>")
-        # Сверяем с прошлым значением
-        if service in dict_data:
-            if not dict_data[service] == ip:
-                print(f"[ERROR] <{service}> IP mismatch: <{dict_data[service]}> <{ip}>")
-
-        # Заполняем справочник
-        new_dict_data[service] = ip
-
-    else:
-        print(f"Сервис {service} недоступен")
-
-# Записываем словарь с новыми данными в файл
-save_dict_to_file(new_dict_data)
