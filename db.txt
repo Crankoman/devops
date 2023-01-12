@@ -1,1 +1,1 @@
-{'drive.google.com': '74.125.205.194', 'mail.google.com': '173.194.222.19', 'google.com': '209.85.233.139'}
+{'drive.google.com': '64.233.165.194', 'mail.google.com': '173.194.222.19', 'google.com': '142.250.150.113'}
