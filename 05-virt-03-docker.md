@@ -108,6 +108,19 @@ https://hub.docker.com/r/crankoman/nginx_crank_devops
 
 <--
 
+```
+mkdir data
+docker run
+docker run --rm --name centos_1 -v $(pwd)/data:/data -t -d centos
+docker run --rm --name debian_2 -v $(pwd)/data:/data -t -d debian
+docker exec -it centos_1 bash -c "echo 'This is some text' > /data/randomtext.txt"
+echo 'This is some text2' > data/randomtext2.txt
+docker exec -it debian_2 bash -c "ls /data"
+randomtext.txt  randomtext2.txt
+docker exec -it debian_2 bash -c "cat /data/randomtext.txt /data/randomtext2.txt"
+This is some text
+This is some text2
+```
 ---
 ## Задача 4 (*)
 
@@ -115,7 +128,31 @@ https://hub.docker.com/r/crankoman/nginx_crank_devops
 
 Соберите Docker образ с Ansible, загрузите на Docker Hub и пришлите ссылку вместе с остальными ответами к задачам.
 
-
 <--
+
+Dockerfile
+
+```
+FROM python
+
+# Install Ansible.
+RUN pip install ansible
+
+# Define working directory.
+WORKDIR /data
+
+# Define default command.
+CMD ["bash"]
+
+```
+
+
+`docker build -t ansible_crank_devops .`
+
+`docker image tag ansible_crank_devops crankoman/ansible_crank_devops:1.0`
+
+`docker image push crankoman/ansible_crank_devops:1.0`
+
+https://hub.docker.com/r/crankoman/ansible_crank_devops
 
 ---
