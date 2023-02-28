@@ -9,6 +9,25 @@
 Для получения зачета вам необходимо предоставить скриншот страницы с созданным образом из личного кабинета YandexCloud.
 
 <--
+```json
+{
+  "builders": [
+    {
+      "type": "yandex",
+      "token": "***",
+      "folder_id": "***",
+      "source_image_family": "ubuntu-2004-lts",
+      "ssh_username": "ubuntu",
+      "disk_type": "network-hdd",
+      "use_ipv4_nat": "true",
+      "subnet_id": "***"
+    }
+  ]
+}
+```
+
+![Результат](/img/2023-03-01_00-38-14.png)
+
 
 ----
 
@@ -17,6 +36,8 @@
 **2.1** Создать вашу первую виртуальную машину в YandexCloud с помощью web-интерфейса YandexCloud.        
 
 <--
+
+![Результат](/img/2023-03-01_00-52-31.png)
 
 ----
 
