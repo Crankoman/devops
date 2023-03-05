@@ -41,7 +41,7 @@
 
 ----
 
-**2.2*** **(Необязательное задание)**      
+**2.2*** **(Необязательное задание)**
 Создать вашу первую виртуальную машину в YandexCloud с помощью terraform (вместо использования веб-интерфейса YandexCloud).
 Используйте terraform код в директории ([src/terraform](https://github.com/netology-group/virt-homeworks/tree/virt-11/05-virt-04-docker-compose/src/terraform))
 
@@ -55,6 +55,8 @@
 
 ```
 terraform apply
+yandex_vpc_network.default: Refreshing state... [id=enpmil0hnp81okgem0r2]
+yandex_vpc_subnet.default: Refreshing state... [id=e9bavqpnkdfdqdr4e8fp]
 
 Terraform used the selected providers to generate the following execution plan. Resource actions are indicated with the following symbols:
   + create
@@ -90,7 +92,7 @@ Terraform will perform the following actions:
           + initialize_params {
               + block_size  = (known after apply)
               + description = (known after apply)
-              + image_id    = "fd8snjpoq85qqv0mk9gi"
+              + image_id    = "fd8i0v13t2ufjashg3g1"
               + name        = "root-node01"
               + size        = 50
               + snapshot_id = (known after apply)
@@ -116,7 +118,7 @@ Terraform will perform the following actions:
           + nat_ip_address     = (known after apply)
           + nat_ip_version     = (known after apply)
           + security_group_ids = (known after apply)
-          + subnet_id          = (known after apply)
+          + subnet_id          = "e9bavqpnkdfdqdr4e8fp"
         }
 
       + placement_policy {
@@ -135,33 +137,7 @@ Terraform will perform the following actions:
         }
     }
 
-  # yandex_vpc_network.default will be created
-  + resource "yandex_vpc_network" "default" {
-      + created_at                = (known after apply)
-      + default_security_group_id = (known after apply)
-      + folder_id                 = (known after apply)
-      + id                        = (known after apply)
-      + labels                    = (known after apply)
-      + name                      = "net"
-      + subnet_ids                = (known after apply)
-    }
-
-  # yandex_vpc_subnet.default will be created
-  + resource "yandex_vpc_subnet" "default" {
-      + created_at     = (known after apply)
-      + folder_id      = (known after apply)
-      + id             = (known after apply)
-      + labels         = (known after apply)
-      + name           = "subnet"
-      + network_id     = (known after apply)
-      + v4_cidr_blocks = [
-          + "192.168.101.0/24",
-        ]
-      + v6_cidr_blocks = (known after apply)
-      + zone           = "ru-central1-a"
-    }
-
-Plan: 3 to add, 0 to change, 0 to destroy.
+Plan: 1 to add, 0 to change, 0 to destroy.
 
 Changes to Outputs:
   + external_ip_address_node01_yandex_cloud = (known after apply)
@@ -173,22 +149,20 @@ Do you want to perform these actions?
 
   Enter a value: yes
 
-yandex_vpc_network.default: Creating...
-yandex_vpc_network.default: Creation complete after 5s [id=enpib18nvrdjms1g7oj1]
-yandex_vpc_subnet.default: Creating...
-yandex_vpc_subnet.default: Creation complete after 1s [id=e9bct8ulhtn6t1vd1160]
 yandex_compute_instance.node01: Creating...
 yandex_compute_instance.node01: Still creating... [10s elapsed]
 yandex_compute_instance.node01: Still creating... [20s elapsed]
 yandex_compute_instance.node01: Still creating... [30s elapsed]
-yandex_compute_instance.node01: Creation complete after 35s [id=fhm6fg8rebfsbmdefsm7]
+yandex_compute_instance.node01: Still creating... [40s elapsed]
+yandex_compute_instance.node01: Still creating... [50s elapsed]
+yandex_compute_instance.node01: Creation complete after 59s [id=fhmph7uugnbt0dddu37p]
 
-Apply complete! Resources: 3 added, 0 changed, 0 destroyed.
+Apply complete! Resources: 1 added, 0 changed, 0 destroyed.
 
 Outputs:
 
-external_ip_address_node01_yandex_cloud = "51.250.82.86"
-internal_ip_address_node01_yandex_cloud = "192.168.101.29"
+external_ip_address_node01_yandex_cloud = "158.160.63.45"
+internal_ip_address_node01_yandex_cloud = "192.168.101.21"
 ```
 </details>
 
@@ -200,9 +174,23 @@ internal_ip_address_node01_yandex_cloud = "192.168.101.29"
 С помощью ansible и docker-compose разверните на виртуальной машине из предыдущего задания систему мониторинга на основе Prometheus/Grafana .
 Используйте ansible код в директории ([src/ansible](https://github.com/netology-group/virt-homeworks/tree/virt-11/05-virt-04-docker-compose/src/ansible))
 
-Для получения зачета вам необходимо предоставить вывод команды "docker ps" , все контейнеры, описанные в ([docker-compose](https://github.com/netology-group/virt-homeworks/blob/virt-11/05-virt-04-docker-compose/src/ansible/stack/docker-compose.yaml)),  должны быть в статусе "Up".
+Для получения зачета вам необходимо предоставить вывод команды "docker ps", все контейнеры, описанные в ([docker-compose](https://github.com/netology-group/virt-homeworks/blob/virt-11/05-virt-04-docker-compose/src/ansible/stack/docker-compose.yaml)),  должны быть в статусе "Up".
 
 <--
+Результат
+
+```
+[root@node01 ~]# docker ps
+CONTAINER ID   IMAGE                              COMMAND                  CREATED         STATUS                   PORTS                                                                              NAMES
+90df3277e6ba   prom/pushgateway:v1.2.0            "/bin/pushgateway"       2 minutes ago   Up 2 minutes             9091/tcp                                                                           pushgateway
+65a919a2d722   stefanprodan/caddy                 "/sbin/tini -- caddy…"   2 minutes ago   Up 2 minutes             0.0.0.0:3000->3000/tcp, 0.0.0.0:9090-9091->9090-9091/tcp, 0.0.0.0:9093->9093/tcp   caddy
+5a6acff5e5c0   prom/prometheus:v2.17.1            "/bin/prometheus --c…"   2 minutes ago   Up 2 minutes             9090/tcp                                                                           prometheus
+f4ca1ff4c82b   grafana/grafana:7.4.2              "/run.sh"                2 minutes ago   Up 2 minutes             3000/tcp                                                                           grafana
+e4fc73407748   prom/alertmanager:v0.20.0          "/bin/alertmanager -…"   2 minutes ago   Up 2 minutes             9093/tcp                                                                           alertmanager
+79555f4546f3   gcr.io/cadvisor/cadvisor:v0.47.0   "/usr/bin/cadvisor -…"   2 minutes ago   Up 2 minutes (healthy)   8080/tcp                                                                           cadvisor
+4642a889e53b   prom/node-exporter:v0.18.1         "/bin/node_exporter …"   2 minutes ago   Up 2 minutes             9100/tcp                                                                           nodeexporter
+
+```
 
 ----
 
@@ -218,6 +206,10 @@ internal_ip_address_node01_yandex_cloud = "192.168.101.29"
 
 <--
 
+http://158.160.63.45:3000/d/p-VsG5qZk/monitor-services?orgId=1&refresh=10s&from=now-5m&to=now
+
+![Результат](img/2023-03-05_14-52-58.png)
+
 ----
 
 ## Задача 5 (*)
@@ -228,5 +220,7 @@ internal_ip_address_node01_yandex_cloud = "192.168.101.29"
 - Скриншот из Grafana, на котором будут отображаться метрики добавленного вами сервера.
 
 <--
+
+![Результат](img/2023-03-05_16-05-30.png)
 
 ----
