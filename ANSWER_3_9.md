@@ -380,8 +380,7 @@ PORT      STATE SERVICE
 Выполним доп. запросы, что бы уточнить сервисы:
 
  - 22/tcp - OpenSSH_6.6.1p1 Ubuntu-2ubuntu2.13
-````
-telnet scanme.nmap.org 22
+````telnet scanme.nmap.org 22
 Trying 45.33.32.156...
 Connected to scanme.nmap.org.
 Escape character is '^]'.
