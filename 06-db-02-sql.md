@@ -10,6 +10,22 @@
 <--
 
 Ответ:
+```yaml
+
+
+```
+
+Проверяем:
+```
+root@test:/tmp# docker ps
+CONTAINER ID   IMAGE                        COMMAND                  CREATED          STATUS          PORTS                                                  NAMES
+dabb4dc60576   postgres:12                  "docker-entrypoint.s…"   44 seconds ago   Up 43 seconds   0.0.0.0:5432->5432/tcp, :::5432->5432/tcp              tmp_postgresql12_1
+root@test:/tmp# ls /tmp/data
+PG_VERSION  pg_commit_ts  pg_ident.conf  pg_notify    pg_snapshots  pg_subtrans  pg_wal                postgresql.conf
+base        pg_dynshmem   pg_logical     pg_replslot  pg_stat       pg_tblspc    pg_xact               postmaster.opts
+global      pg_hba.conf   pg_multixact   pg_serial    pg_stat_tmp   pg_twophase  postgresql.auto.conf  postmaster.pid
+
+```
 
 ---
 
@@ -43,6 +59,14 @@
 
 Ответ:
 
+```sql
+
+```
+
+1. итоговый список БД после выполнения пунктов выше,
+1. описание таблиц (describe)
+1. SQL-запрос для выдачи списка пользователей с правами над таблицами test_db
+1. список пользователей с правами над таблицами test_db
 ---
 
 ## Задача 3
