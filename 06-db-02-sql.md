@@ -255,6 +255,7 @@ SELECT * FROM public.orders;
 
 ```
 ```
+ALTER TABLE public.clients ALTER COLUMN заказ DROP NOT NULL;
 INSERT INTO public.clients (id, "фамилия", "страна проживания", "заказ") 
 VALUES (1, 'Иванов Иван Иванович', 'USA', NULL),
 (2, 'Петров Петр Петрович', 'Canada', NULL),
@@ -354,7 +355,7 @@ EXPLAIN SELECT * FROM public.clients WHERE "заказ" IS NOT NULL;
 ```
 Ответ:
 Seq Scan on clients  (cost=0.00..18.10 rows=806 width=72)- процессорное времени на поиск первой записи .. весь результат  rows=ориентировочное количество строк, width=средний размер строки в байтах
-Filter - примененые фильтры
+Filter - примененные фильтры
 ---
 
 ## Задача 6
@@ -372,36 +373,95 @@ Filter - примененые фильтры
 <--
 
 Ответ:
-```commandline
-root@28b52f40e070:/# pg_dump -U postgres -d test_db -Fc  -f /var/lib/postgresql/backup/backup.back
-root@4SER-1670916090:/tmp# ls backup/
-backup.back
+```
+### выполняем бекап ролей и пользователей
+root@67eea6adbdf1:/# pg_dump -U postgres -d test_db -f /var/lib/postgresql/backup/test_db.backup
+### выполняем бекап базы
+root@67eea6adbdf1:/# pg_dumpall --globals-only --file=/var/lib/postgresql/backup/all_roles_and_users.sql -U postgres
+### проверям что все сохранилось на хостовой машине
+root@4SER-1670916090:/tmp# ls /tmp/backup/
+all_roles_and_users.sql  test_db.backup
+### удаляем контейнер
 root@4SER-1670916090:/tmp# docker-compose down
 Stopping tmp_postgresql12_1 ... done
 Removing tmp_postgresql12_1 ... done
-Removing network tmp_default
-root@4SER-1670916090:/tmp# rm -rf data/ # удяляем данные старого контейнера
+Removing network tmp_default\
+### удаляем данные старого контейнера
+root@4SER-1670916090:/tmp# rm -rf data/ 
+### запускаем контейнер
 root@4SER-1670916090:/tmp# docker-compose up -d
 Creating network "tmp_default" with the default driver
 Creating tmp_postgresql12_1 ... done
-root@4SER-1670916090:/tmp# docker exec -it tmp_postgresql12_1 bash
-root@6e384847dbf6:/# psql -U postgres
-psql (12.14 (Debian 12.14-1.pgdg110+1))
-Type "help" for help.
+### восстанавлиаем бекап ролей и пользователей с хостовой машины 
+root@4SER-1670916090:/tmp# docker exec -i tmp_postgresql12_1 psql -U postgres  < /tmp/backup/all_roles_and_users.sql
+SET
+SET
+ERROR:  role "postgres" already exists
+SET
+ALTER ROLE
+ERROR:  role "test-admin-user" already exists
+ALTER ROLE
+ERROR:  role "test-simple-user" already exists
+ALTER ROLE
+### восстанавлиаем бекап базы с хостовой машины 
+root@4SER-1670916090:/tmp# docker exec -i tmp_postgresql12_1 psql -U postgres  < /tmp/backup/test_db.backup
+SET
+SET
+SET
+SET
+SET
+ set_config
+------------
 
-postgres=# \l+
-                                                                   List of databases
-   Name    |  Owner   | Encoding |  Collate   |   Ctype    |   Access privileges   |  Size   | Tablespace |                Description
------------+----------+----------+------------+------------+-----------------------+---------+------------+--------------------------------------------
- postgres  | postgres | UTF8     | en_US.utf8 | en_US.utf8 |                       | 7969 kB | pg_default | default administrative connection database
- template0 | postgres | UTF8     | en_US.utf8 | en_US.utf8 | =c/postgres          +| 7825 kB | pg_default | unmodifiable empty database
-           |          |          |            |            | postgres=CTc/postgres |         |            |
- template1 | postgres | UTF8     | en_US.utf8 | en_US.utf8 | =c/postgres          +| 7825 kB | pg_default | default template for new databases
-           |          |          |            |            | postgres=CTc/postgres |         |            |
-(3 rows)
+(1 row)
 
+SET
+SET
+SET
+SET
+SET
+SET
+CREATE TABLE
+ALTER TABLE
+CREATE SEQUENCE
+ALTER TABLE
+ALTER SEQUENCE
+CREATE SEQUENCE
+ALTER TABLE
+ALTER SEQUENCE
+CREATE TABLE
+ALTER TABLE
+CREATE SEQUENCE
+ALTER TABLE
+ALTER SEQUENCE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+COPY 5
+COPY 5
+ setval
+--------
+      1
+(1 row)
 
+ setval
+--------
+      1
+(1 row)
 
+ setval
+--------
+      5
+(1 row)
+
+ALTER TABLE
+ALTER TABLE
+CREATE INDEX
+ALTER TABLE
+GRANT
+GRANT
+GRANT
+GRANT
 
 ```
 ---
