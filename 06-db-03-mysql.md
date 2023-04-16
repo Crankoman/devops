@@ -42,17 +42,19 @@ touch ./my.cnf
 docker-compose up -d
 ```
 
-Скачиваем бекап 
+Скачиваем бекап
+
 ```commandline
 wget https://raw.githubusercontent.com/netology-code/virt-homeworks/virt-11/06-db-03-mysql/test_data/test_dump.sql
 ```
 
 Создаем базу данных и восстанавливаем бекап
+
 ```commandline
 docker exec -i mysql-test_mysql-server-80_1 mysql -u root --password=test_password -e "CREATE DATABASE `test_db` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
 ```
 
-Получаем ye;yst lfyyst 
+Получаем нужные данные
 <details>                         
     <summary>подробнее</summary>
 
@@ -165,7 +167,6 @@ mysql> SELECT COUNT(*) FROM `orders` WHERE `price` > 300;
 
 Количество записей: `1`
 
-
 ---
 
 ## Задача 2
@@ -180,14 +181,50 @@ mysql> SELECT COUNT(*) FROM `orders` WHERE `price` > 300;
     - Фамилия "Pretty"
     - Имя "James".
 
-Предоставьте привелегии пользователю `test` на операции SELECT базы `test_db`.
-    
+
+Предоставьте привилегии пользователю `test` на операции SELECT базы `test_db`.
+
+```sql
+GRANT SELECT ON test_db.* TO 'test';
+```
+
 Используя таблицу INFORMATION_SCHEMA.USER_ATTRIBUTES, получите данные по пользователю `test` и 
 **приведите в ответе к задаче**.
 
 <--
 
 Ответ:
+
+Создаем пользователя 
+
+```sql
+CREATE USER test 
+IDENTIFIED WITH mysql_native_password BY 'test-pass'
+WITH 
+MAX_CONNECTIONS_PER_HOUR 100
+PASSWORD EXPIRE INTERVAL 100 DAY
+FAILED_LOGIN_ATTEMPTS 3
+ATTRIBUTE '{"fname": "James", "lname": "Pretty"}';
+```
+
+Предоставляем права
+
+```sql
+GRANT SELECT ON test_db.* TO 'test';
+FLUSH PRIVILEGES;
+```
+
+Проверяем
+
+```commandline
+mysql> select * from INFORMATION_SCHEMA.USER_ATTRIBUTES WHERE user = 'test';
++------+------+---------------------------------------+
+| USER | HOST | ATTRIBUTE                             |
++------+------+---------------------------------------+
+| test | %    | {"fname": "James", "lname": "Pretty"} |
++------+------+---------------------------------------+
+1 row in set (0.00 sec)
+```
 
 ---
 
@@ -207,8 +244,154 @@ mysql> SELECT COUNT(*) FROM `orders` WHERE `price` > 300;
 
 Ответ:
 
----
+Смотрим профилирование запросов 
+```commandline
+mysql> SET profiling = 1;
+Query OK, 0 rows affected, 1 warning (0.00 sec)
 
+mysql> select * from orders;
++----+-----------------------+-------+
+| id | title                 | price |
++----+-----------------------+-------+
+|  1 | War and Peace         |   100 |
+|  2 | My little pony        |   500 |
+|  3 | Adventure mysql times |   300 |
+|  4 | Server gravity falls  |   300 |
+|  5 | Log gossips           |   123 |
++----+-----------------------+-------+
+5 rows in set (0.00 sec)
+
+mysql> SHOW PROFILES;
++----------+------------+----------------------+
+| Query_ID | Duration   | Query                |
++----------+------------+----------------------+
+|        1 | 0.00341450 | select * from orders |
++----------+------------+----------------------+
+1 row in set, 1 warning (0.00 sec)
+
+mysql> SHOW PROFILE FOR QUERY 1;
++--------------------------------+----------+
+| Status                         | Duration |
++--------------------------------+----------+
+| starting                       | 0.000866 |
+| Executing hook on transaction  | 0.000043 |
+| starting                       | 0.000118 |
+| checking permissions           | 0.000055 |
+| Opening tables                 | 0.000471 |
+| init                           | 0.000135 |
+| System lock                    | 0.000107 |
+| optimizing                     | 0.000049 |
+| statistics                     | 0.000242 |
+| preparing                      | 0.000311 |
+| executing                      | 0.000593 |
+| end                            | 0.000023 |
+| query end                      | 0.000011 |
+| waiting for handler commit     | 0.000102 |
+| closing tables                 | 0.000057 |
+| freeing items                  | 0.000074 |
+| cleaning up                    | 0.000160 |
++--------------------------------+----------+
+17 rows in set, 1 warning (0.01 sec)
+
+```
+
+Проверяем какой движек используется в test_db - InnoDB
+
+```
+mysql> SELECT TABLE_SCHEMA ,TABLE_NAME, ENGINE  FROM information_schema.TABLES WHERE TABLE_SCHEMA = 'test_db';
++--------------+------------+--------+
+| TABLE_SCHEMA | TABLE_NAME | ENGINE |
++--------------+------------+--------+
+| test_db      | orders     | InnoDB |
++--------------+------------+--------+
+1 row in set (0.00 sec)
+```
+
+Меняем производительность и смотрим как меняется производительность
+
+```commandline
+mysql> ALTER TABLE test_db.orders  ENGINE = MyISAM;
+Query OK, 5 rows affected (0.09 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+mysql> select * from test_db.orders;
++----+-----------------------+-------+
+| id | title                 | price |
++----+-----------------------+-------+
+|  1 | War and Peace         |   100 |
+|  2 | My little pony        |   500 |
+|  3 | Adventure mysql times |   300 |
+|  4 | Server gravity falls  |   300 |
+|  5 | Log gossips           |   123 |
++----+-----------------------+-------+
+5 rows in set (0.00 sec)
+
+mysql> SHOW PROFILE FOR QUERY 14;
++--------------------------------+----------+
+| Status                         | Duration |
++--------------------------------+----------+
+| starting                       | 0.001112 |
+| Executing hook on transaction  | 0.000046 |
+| starting                       | 0.000152 |
+| checking permissions           | 0.000130 |
+| Opening tables                 | 0.000656 |
+| init                           | 0.000068 |
+| System lock                    | 0.000313 |
+| optimizing                     | 0.000058 |
+| statistics                     | 0.000202 |
+| preparing                      | 0.000358 |
+| executing                      | 0.000476 |
+| end                            | 0.000030 |
+| query end                      | 0.000092 |
+| closing tables                 | 0.000084 |
+| freeing items                  | 0.001004 |
+| cleaning up                    | 0.000162 |
++--------------------------------+----------+
+16 rows in set, 1 warning (0.00 sec)
+
+mysql> ALTER TABLE test_db.orders  ENGINE = InnoDB;
+Query OK, 5 rows affected (0.10 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+mysql> select * from test_db.orders;
++----+-----------------------+-------+
+| id | title                 | price |
++----+-----------------------+-------+
+|  1 | War and Peace         |   100 |
+|  2 | My little pony        |   500 |
+|  3 | Adventure mysql times |   300 |
+|  4 | Server gravity falls  |   300 |
+|  5 | Log gossips           |   123 |
++----+-----------------------+-------+
+5 rows in set (0.00 sec)
+
+
+mysql> SHOW PROFILE FOR QUERY 16;
++--------------------------------+----------+
+| Status                         | Duration |
++--------------------------------+----------+
+| starting                       | 0.000397 |
+| Executing hook on transaction  | 0.000012 |
+| starting                       | 0.000035 |
+| checking permissions           | 0.000019 |
+| Opening tables                 | 0.000158 |
+| init                           | 0.000022 |
+| System lock                    | 0.000046 |
+| optimizing                     | 0.000026 |
+| statistics                     | 0.000113 |
+| preparing                      | 0.000176 |
+| executing                      | 0.000134 |
+| end                            | 0.000011 |
+| query end                      | 0.000015 |
+| waiting for handler commit     | 0.000058 |
+| closing tables                 | 0.000041 |
+| freeing items                  | 0.000049 |
+| cleaning up                    | 0.000081 |
++--------------------------------+----------+
+17 rows in set, 1 warning (0.01 sec)
+```
+
+---
 
 ## Задача 4 
 
@@ -224,9 +407,19 @@ mysql> SELECT COUNT(*) FROM `orders` WHERE `price` > 300;
 
 Приведите в ответе изменённый файл `my.cnf`.
 
-
 <--
 
 Ответ:
+
+По умолчанию `/etc/my.cnf` - пустой
+
+```
+[mysqld]
+innodb_flush_log_at_trx_commit = 0
+innodb_file_per_table = ON
+innodb_log_buffer_size = 1M
+innodb_buffer_pool_size = 300M
+innodb_redo_log_capacity = 100M
+```
 
 ---
