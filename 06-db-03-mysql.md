@@ -421,5 +421,4 @@ innodb_log_buffer_size = 1M
 innodb_buffer_pool_size = 300M
 innodb_redo_log_capacity = 100M
 ```
-
 ---
