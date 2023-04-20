@@ -20,6 +20,25 @@
 
 Ответ:
 
+```yaml
+version: '3.9'
+services:
+  db:
+    image: postgres:13
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - '5432:5432'
+    volumes:
+      - data:/var/lib/postgresql/data
+volumes:
+  data:
+    driver: local
+
+```
+
 ---
 
 ## Задача 2
