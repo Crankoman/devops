@@ -9,11 +9,11 @@
 - запуске Elasticsearch в Docker.
 
 Используя Docker-образ [centos:7](https://hub.docker.com/_/centos) как базовый и
-[документацию по установке и запуску Elastcisearch](https://www.elastic.co/guide/en/elasticsearch/reference/>
+[документацию по установке и запуску Elastcisearch](https://www.elastic.co/guide/en/elasticsearch/reference/)
 
 - составьте Dockerfile-манифест для Elasticsearch,
 - соберите Docker-образ и сделайте `push` в ваш docker.io-репозиторий,
-- запустите контейнер из получившегося образа и выполните запрос пути `/` c хост-машины.
+- запустите контейнер из получившегося образа и выполните запрос пути `/` с хост-машины.
 
 Требования к `elasticsearch.yml`:
 
@@ -34,6 +34,25 @@
 - Elasticsearch в логах обычно описывает проблему и пути её решения.
 
 Далее мы будем работать с этим экземпляром Elasticsearch.
+
+<--
+
+Ответ:
+
+```dockerfile
+FROM centos:7
+RUN yum -y install java-1.8.0-openjdk-devel curl
+RUN curl -L -O https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-7.10.2-linux-x86_64.tar.gz
+RUN useradd -ms /bin/bash elasticsearch
+
+RUN tar -xvf elasticsearch-7.10.2-linux-x86_64.tar.gz
+cd elasticsearch-7.10.2/bin
+./elasticsearch \
+CMD
+EXPOSE 9200
+```
+
+---
 
 ## Задача 2
 
@@ -66,6 +85,12 @@
 При проектировании кластера Elasticsearch нужно корректно рассчитывать количество реплик и шард,
 иначе возможна потеря данных индексов, вплоть до полной, при деградации системы.
 
+<--
+
+Ответ:
+
+---
+
 ## Задача 3
 
 В этом задании вы научитесь:
@@ -77,7 +102,7 @@
 
 Используя
 API, [зарегистрируйте](https://www.elastic.co/guide/en/elasticsearch/reference/current/snapshots-register-repository.html#snapshots-register-repository)
-эту директорию как `snapshot repository` c именем `netology_backup`.
+эту директорию как `snapshot repository` с именем `netology_backup`.
 
 **Приведите в ответе** запрос API и результат вызова API для создания репозитория.
 
@@ -85,6 +110,7 @@ API, [зарегистрируйте](https://www.elastic.co/guide/en/elasticsea
 
 [Создайте `snapshot`](https://www.elastic.co/guide/en/elasticsearch/reference/current/snapshots-take-snapshot.html)
 состояния кластера `Elasticsearch`.
+
 
 **Приведите в ответе** список файлов в директории со `snapshot`.
 
@@ -101,6 +127,8 @@ API, [зарегистрируйте](https://www.elastic.co/guide/en/elasticsea
 - возможно, вам понадобится доработать `elasticsearch.yml` в части директивы `path.repo` и
   перезапустить `Elasticsearch`.
 
+<--
+
+Ответ:
+
 ---
-
-
