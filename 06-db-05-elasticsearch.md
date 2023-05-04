@@ -41,17 +41,37 @@
 
 ```dockerfile
 FROM centos:7
-RUN yum -y install java-1.8.0-openjdk-devel curl
-RUN curl -L -O https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-7.10.2-linux-x86_64.tar.gz
-RUN useradd -ms /bin/bash elasticsearch
 
-RUN tar -xvf elasticsearch-7.10.2-linux-x86_64.tar.gz
-cd elasticsearch-7.10.2/bin
-./elasticsearch \
-CMD
-EXPOSE 9200
+EXPOSE 9200 9300
+RUN yum -y install curl && \
+    curl -L -O https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-7.10.2-linux-x86_64.tar.gz && \
+    yum -y clean all  && rm -rf /var/cache && \
+    groupadd -g 1000 elasticsearch && useradd -ms /bin/bash elasticsearch -u 1000 -g 1000 && \
+    tar -xvf elasticsearch-7.10.2-linux-x86_64.tar.gz  && rm elasticsearch-7.10.2-linux-x86_64.tar.gz && \
+    mv elasticsearch-7.10.2 /var/lib/elasticsearch && chown -R elasticsearch:elasticsearch /var/lib/elasticsearch
+
+COPY elasticsearch.yml /var/lib/elasticsearch/config/elasticsearch.yml
+
+USER 1000
+
+WORKDIR /var/lib/elasticsearch
+CMD ["/var/lib/elasticsearch/bin/elasticsearch"]
 ```
 
+```commandline
+path:
+    data: /var/lib/elasticsearch
+node.name: netology_test
+network.host: 0.0.0.0
+```
+
+```commandline
+docker build . -t crankoman/elasticsearch_crank_devops:7.10.2
+docker push crankoman/elasticsearch_crank_devops:7.10.2
+```
+```commandline
+docker run --rm -d --name elasticsearch -p 9200:9200 crankoman/elasticsearch_crank_devops:7.10.2
+```
 ---
 
 ## Задача 2
