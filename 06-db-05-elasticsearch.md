@@ -236,12 +236,67 @@ API, [зарегистрируйте](https://www.elastic.co/guide/en/elasticsea
 <--
 
 Ответ:
+Создаем папку, прописываем путь в `elasticsearch.yml` и проверяем
+```
+docker exec -t admiring_spence bash -c "mkdir /var/lib/elasticsearch/snapshots"
+docker exec -t -u root admiring_spence bash -c 'echo path.repo: /var/lib/elasticsearch/snapshots >> /var/lib/elasticsearch/config/elasticsearch.ym
+docker exec -t admiring_spence bash -c "cat /var/lib/elasticsearch/config/elasticsearch.yml"
+path:
+    data: /var/lib/elasticsearch
+node.name: netology_test
+network.host: 0.0.0.0
+discovery.type: single-node
+path.repo: /var/lib/elasticsearch/snapshots
+```
+Перезапускаем контейнер и регистрируем `snapshot repository`
+```
+docker restart admiring_spenc
 
-docker exec magical_sammet bash -c "mkdir /var/lib/elasticsearch/snapshots"
+curl -H 'Content-Type: application/json' -X PUT localhost/_snapshot/netology_backup -d '{"type": "fs","settings": {"location": "/var/lib/elasticsearch/snapshots"}}'
+{"acknowledged":true}
+```
+Создаем индекс `test`, проверяем и делаем `snapshot`
+```
+curl -H 'Content-Type: application/json' -X PUT localhost/test -d'{"settings": {"number_of_shards": 1,"number_of_replicas": 0}}'er_of_replicas": 0}}'
+{"acknowledged":true,"shards_acknowledged":true,"index":"test"}
+
+curl localhost/_cat/indices?v=true
+health status index uuid                   pri rep docs.count docs.deleted store.size pri.store.size
+green  open   test  DcNCNSpcSU2RP_-QQLOJ1Q   1   0          0            0       208b           208b
+
+curl -X PUT localhost/_snapshot/netology_backup/snapshot_test?wait_for_completion=true
+{"snapshot":{"snapshot":"snapshot_test","uuid":"P9Bu1aHCT5CiK4Z7Xg73CQ","version_id":7100299,"version":"7.10.2","indices":["test"],"data_streams":[],"include_global_state":true,"state":"SUCCESS","start_time":"2023-05-10T14:45:42.463Z","start_time_in_millis":1683729942463,"end_time":"2023-05-10T14:45:42.463Z","end_time_in_millis":1683729942463,"duration_in_millis":0,"failures":[],"shards":{"total":1,"failed":0,"successful":1}}}
+
+docker exec -it admiring_spence bash -c 'ls -l /var/lib/elasticsearch/snapshots/'
+total 48
+-rw-r--r-- 1 elasticsearch elasticsearch   437 May 10 14:45 index-6
+-rw-r--r-- 1 elasticsearch elasticsearch     8 May 10 14:45 index.latest
+drwxr-xr-x 3 elasticsearch elasticsearch  4096 May 10 14:45 indices
+-rw-r--r-- 1 elasticsearch elasticsearch 30650 May 10 14:45 meta-P9Bu1aHCT5CiK4Z7Xg73CQ.dat
+-rw-r--r-- 1 elasticsearch elasticsearch   269 May 10 14:45 snap-P9Bu1aHCT5CiK4Z7Xg73CQ.dat
+```
+Удаляем индекс `test` и создаем индекс `test-2` и получаем список индексов
+```
+curl -X DELETE localhost/test
+{"acknowledged":true}
+
+curl -H 'Content-Type: application/json' -X PUT localhost/test-2 -d'{"settings": {"number_of_shards": 1,"number_of_replicas": 0}}'
+{"acknowledged":true,"shards_acknowledged":true,"index":"test-2"}
+
+curl localhost/_cat/indices?v=true
+health status index  uuid                   pri rep docs.count docs.deleted store.size pri.store.size
+green  open   test-2 myB6v5FFT8evCdnQm7Lm6g   1   0          0            0       208b           208b
 
 ```
-echo path.repo: "/var/lib/elasticsearch/snapshots" >> "$ES_HOME/config/elasticsearch.yml"
-docker restart elastic
-curl -H 'Content-Type: application/json' -X PUT localhost/_snapshot/netology_backup -d '{"type": "fs","settings": {"location": "/var/lib/elasticsearch/snapshots","compress": true}}'
+
+Восстанавливаем состояние кластера из `snapshot`
+```
+curl -X POST localhost/_snapshot/netology_backup/snapshot_test/_restore
+{"accepted":true}
+
+curl localhost/_cat/indices?v=true
+health status index  uuid                   pri rep docs.count docs.deleted store.size pri.store.size
+green  open   test-2 myB6v5FFT8evCdnQm7Lm6g   1   0          0            0       208b           208b
+green  open   test   ggcdwC_cTCqNMVadkrttHw   1   0          0            0       208b           208b
 ```
 ---
