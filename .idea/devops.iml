@@ -4,6 +4,9 @@
     <content url="file://$MODULE_DIR$">
       <excludeFolder url="file://$MODULE_DIR$/vagrant/disks" />
       <excludeFolder url="file://$MODULE_DIR$/venv" />
+      <excludeFolder url="file://$MODULE_DIR$/vagrant/.vagrant/machines/netology1" />
+      <excludeFolder url="file://$MODULE_DIR$/vagrant/.vagrant/machines/netology2" />
+      <excludeFolder url="file://$MODULE_DIR$/vagrant/.vagrant/machines/netology3" />
     </content>
     <orderEntry type="jdk" jdkName="Python 3.9 (devops)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
