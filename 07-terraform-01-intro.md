@@ -67,7 +67,11 @@
 
 Ответ:
 
-
+```commandline
+terraform --version
+Terraform v1.4.6
+on linux_amd64
+```
 
 ---
 
@@ -84,7 +88,21 @@
 <--
 
 Ответ:
+```commandline
+wget https://hashicorp-releases.yandexcloud.net/terraform/1.4.5/terraform_1.4.5_linux_amd64.zip
+unzip terraform_1.4.5_linux_amd64.zip
+mv terraform /usr/bin/terraform_1.4.5
 
+terraform_1.4.5 --version
+Terraform v1.4.5
+on linux_amd64
 
+Your version of Terraform is out of date! The latest version
+is 1.4.6. You can update by downloading from https://www.terraform.io/downloads.html
+
+terraform --version
+Terraform v1.4.6
+on linux_amd64
+```
 
 ---
