@@ -41,7 +41,7 @@
 Ответ:
 
 1. `cd /ter-homeworks/01/src` и `terraform init`
-2. `*.tfstate.*`
+2. `personal.auto.tfvars`
 3. Выполняем код с автоматическим подтверждением `terraform apply -auto-approve`, получаем результат `grep '"result"' terraform.tfstate` результат `"result": "o7eVSfkNFqWOkBRM"`
 4. 
 Ошибка 1. `resource "docker_image" ` - в блоке у ресурса должно быть указано два обозначения тип и имя, а тут только одно. 
