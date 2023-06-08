@@ -44,6 +44,15 @@ https://console.cloud.yandex.ru/folders/<ваш cloud_id>/vpc/security-groups.
 
 Ответ:
 
+
+
+1. скриншот ЛК Yandex Cloud с созданной ВМ - ![Результат1](img/2023-06-08_23-06-50.png)
+
+2. скриншот успешного подключения к консоли ВМ через ssh - ![Результат2](img/2023-06-08_23-08-43.png)
+
+3. Проблема `the specified number of cores is not available on platform "standard-v1"; allowed core number: 2, 4` решается установкой `cores` = 2
+Суть проблемы в том, что для данной ВМ не предусмотрена поддержка 1-ого ядра процессора
+
 ---
 
 
