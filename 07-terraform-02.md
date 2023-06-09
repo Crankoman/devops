@@ -44,6 +44,10 @@ https://console.cloud.yandex.ru/folders/<ваш cloud_id>/vpc/security-groups.
 
 Ответ:
 
+
+
+
+
 ---
 
 
