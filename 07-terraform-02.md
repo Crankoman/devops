@@ -12,6 +12,8 @@
 2. Установлен инструмент Yandex Cli.
 3. Исходный код для выполнения задания расположен в директории [**02/src**](https://github.com/netology-code/ter-homeworks/tree/main/02/src).
 
+### Итоговый код проекта 
+[код проекта]()
 
 ### Задание 0
 
@@ -19,10 +21,6 @@
 2. Запросите preview доступ к данному функционалу в ЛК Yandex Cloud. Обычно его выдают в течении 24-х часов.
 https://console.cloud.yandex.ru/folders/<ваш cloud_id>/vpc/security-groups.   
 Этот функционал понадобится к следующей лекции. 
-
-<--
-
-Ответ:
 
 ---
 
@@ -596,11 +594,6 @@ variable "metadata" {
 > "${local.test_map.admin} is admin for ${local.test_list[2]} server based on OS ${local.servers.production.image} with ${local.servers.production.cpu} vcpu, ${local.servers.production.ram} ram and ${length(local.servers.production.disks)} virtual disks"
 "John is admin for production server based on OS ubuntu-20-04 with 10 vcpu, 40 ram and 4 virtual disks"
 ```
-
-
-
-
 ---
 
-------
 
