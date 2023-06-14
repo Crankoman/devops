@@ -365,11 +365,20 @@ variable "vm_db_core_fraction" {
 
 outputs.tf
 ```
-
+output "instance_external_ip" {
+  value = { 
+			"${yandex_compute_instance.platform.name}" = "${yandex_compute_instance.platform.network_interface[0].nat_ip_address}",
+			"${yandex_compute_instance.platform_db.name}" = "${yandex_compute_instance.platform_db.network_interface[0].nat_ip_address}" 
+		  }
+}
 ```
 
 вывод `terraform output`
 ```
+instance_external_ip = {
+  "netology-develop-platform-db" = "51.250.87.131"
+  "netology-develop-platform-web" = "51.250.69.107"
+}
 
 ```
 ---
