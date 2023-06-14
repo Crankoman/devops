@@ -567,8 +567,6 @@ variable "metadata" {
 "John is admin for production server based on OS ubuntu-20-04 with X vcpu, Y ram and Z virtual disks", 
 используйте данные из переменных test_list, test_map, servers и функцию length() для подстановки значений.
 
-"${local.test_map.admin} is admin for ${local.servers[3]} server based on OS ${local.servers.production.image} with ${local.servers.production.cpu}" vcpu, ${local.servers.production.ram} ram and ${join(", ',local.servers.production.disks)} virtual disks" 
-
 В качестве решения предоставьте необходимые команды и их вывод.
 
 <--
