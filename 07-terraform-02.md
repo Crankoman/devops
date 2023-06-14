@@ -53,6 +53,11 @@ https://console.cloud.yandex.ru/folders/<ваш cloud_id>/vpc/security-groups.
 3. Проблема `the specified number of cores is not available on platform "standard-v1"; allowed core number: 2, 4` решается установкой `cores` = 2
 Суть проблемы в том, что для данной ВМ не предусмотрена поддержка 1-ого ядра процессора
 
+4. Как могут пригодиться параметры```preemptible = true``` и ```core_fraction=5```?
+
+`core_fraction` - уровень производительности - 5%, не менее 50 мс в секунду будут гарантированно выделены. Указан самый минимальный, что бы не тратить много денег на ресурсы в рамках обучения. https://cloud.yandex.ru/docs/compute/concepts/performance-levels
+`preemptible` - ВМ будет "прерываемая", т.е. не отказоустойчивая и может быть принудительно отключена, если будет не хватать ресурсов, зато они дешевле.
+
 ---
 
 
@@ -67,6 +72,114 @@ https://console.cloud.yandex.ru/folders/<ваш cloud_id>/vpc/security-groups.
 
 Ответ:
 
+main.tf
+```
+resource "yandex_vpc_network" "develop" {
+  name = var.vpc_name
+}
+resource "yandex_vpc_subnet" "develop" {
+  name           = var.vpc_name
+  zone           = var.default_zone
+  network_id     = yandex_vpc_network.develop.id
+  v4_cidr_blocks = var.default_cidr
+}
+
+
+data "yandex_compute_image" "ubuntu" {
+  family = var.vm_web_family
+}
+resource "yandex_compute_instance" "platform" {
+  name        = var.vm_web_name
+  platform_id = var.vm_web_platform_id
+  resources {
+    cores         = 2
+    memory        = 1
+    core_fraction = 5
+  }
+  boot_disk {
+    initialize_params {
+      image_id = data.yandex_compute_image.ubuntu.image_id
+    }
+  }
+  scheduling_policy {
+    preemptible = true
+  }
+  network_interface {
+    subnet_id = yandex_vpc_subnet.develop.id
+    nat       = true
+  }
+
+  metadata = {
+    serial-port-enable = 1
+    ssh-keys           = "ubuntu:${var.vms_ssh_root_key}"
+  }
+
+}
+
+```
+
+variables.tf
+```
+###cloud vars
+variable "token" {
+  type        = string
+  description = "OAuth-token; https://cloud.yandex.ru/docs/iam/concepts/authorization/oauth-token"
+}
+
+variable "cloud_id" {
+  type        = string
+  description = "https://cloud.yandex.ru/docs/resource-manager/operations/cloud/get-id"
+}
+
+variable "folder_id" {
+  type        = string
+  description = "https://cloud.yandex.ru/docs/resource-manager/operations/folder/get-id"
+}
+
+variable "default_zone" {
+  type        = string
+  default     = "ru-central1-a"
+  description = "https://cloud.yandex.ru/docs/overview/concepts/geo-scope"
+}
+variable "default_cidr" {
+  type        = list(string)
+  default     = ["10.0.1.0/24"]
+  description = "https://cloud.yandex.ru/docs/vpc/operations/subnet-create"
+}
+
+variable "vpc_name" {
+  type        = string
+  default     = "develop"
+  description = "VPC network & subnet name"
+}
+
+variable "vm_web_name" {
+  type        = string
+  default     = "netology-develop-platform-web"
+  description = "platform name"
+}
+
+variable "vm_web_platform_id" {
+  type        = string
+  default     = "standard-v1"
+  description = "platform id"
+}
+
+variable "vm_web_family" {
+  type        = string
+  default     = "ubuntu-2004-lts"
+  description = "image family"
+}
+
+###ssh vars
+
+variable "vms_ssh_root_key" {
+  type        = string
+  default     = "<your_ssh_ed25519_key>"
+  description = "ssh-keygen -t ed25519"
+}
+```
+
 ---
 
 
@@ -79,6 +192,162 @@ https://console.cloud.yandex.ru/folders/<ваш cloud_id>/vpc/security-groups.
 <--
 
 Ответ:
+
+main.tf
+```
+resource "yandex_vpc_network" "develop" {
+  name = var.vpc_name
+}
+resource "yandex_vpc_subnet" "develop" {
+  name           = var.vpc_name
+  zone           = var.default_zone
+  network_id     = yandex_vpc_network.develop.id
+  v4_cidr_blocks = var.default_cidr
+}
+
+
+data "yandex_compute_image" "ubuntu" {
+  family = var.vm_web_family
+}
+
+data "yandex_compute_image" "ubuntu_db" {
+  family = var.vm_db_family
+}
+
+resource "yandex_compute_instance" "platform" {
+  name        = var.vm_web_name
+  platform_id = var.vm_web_platform_id
+  resources {
+    cores         = var.vm_web_cores
+    memory        = var.vm_web_memory
+    core_fraction = var.vm_web_core_fraction
+  }
+  boot_disk {
+    initialize_params {
+      image_id = data.yandex_compute_image.ubuntu.image_id
+    }
+  }
+  scheduling_policy {
+    preemptible = true
+  }
+  network_interface {
+    subnet_id = yandex_vpc_subnet.develop.id
+    nat       = true
+  }
+
+  metadata = {
+    serial-port-enable = 1
+    ssh-keys           = "ubuntu:${var.vms_ssh_root_key}"
+  }
+
+}
+
+
+resource "yandex_compute_instance" "platform_db" {
+  name        = var.vm_db_name
+  platform_id = var.vm_db_platform_id
+  resources {
+    cores         = var.vm_db_cores
+    memory        = var.vm_db_memory
+    core_fraction = var.vm_db_core_fraction
+  }
+  boot_disk {
+    initialize_params {
+      image_id = data.yandex_compute_image.ubuntu_db.image_id
+    }
+  }
+  scheduling_policy {
+    preemptible = true
+  }
+  network_interface {
+    subnet_id = yandex_vpc_subnet.develop.id
+    nat       = true
+  }
+
+  metadata = {
+    serial-port-enable = 1
+    ssh-keys           = "ubuntu:${var.vms_ssh_root_key}"
+  }
+
+}
+```
+
+vms_platform.tf
+```
+## web vars
+variable "vm_web_name" {
+  type        = string
+  default     = "netology-develop-platform-web"
+  description = "platform name"
+}
+
+variable "vm_web_platform_id" {
+  type        = string
+  default     = "standard-v1"
+  description = "platform id"
+}
+
+variable "vm_web_family" {
+  type        = string
+  default     = "ubuntu-2004-lts"
+  description = "image family"
+}
+
+variable "vm_web_cores" {
+  type        = number
+  default     = 2
+  description = "cores"
+}
+
+variable "vm_web_memory" {
+  type        = number
+  default     = 1
+  description = "memory"
+}
+
+variable "vm_web_core_fraction" {
+  type        = number
+  default     = 5
+  description = "core_fraction"
+}
+
+## db vars
+variable "vm_db_name" {
+  type        = string
+  default     = "netology-develop-platform-db"
+  description = "platform name"
+}
+
+variable "vm_db_platform_id" {
+  type        = string
+  default     = "standard-v1"
+  description = "platform id"
+}
+
+variable "vm_db_family" {
+  type        = string
+  default     = "ubuntu-2004-lts"
+  description = "image family"
+}
+
+variable "vm_db_cores" {
+  type        = number
+  default     = 2
+  description = "cores"
+}
+
+variable "vm_db_memory" {
+  type        = number
+  default     = 2
+  description = "memory"
+}
+
+variable "vm_db_core_fraction" {
+  type        = number
+  default     = 20
+  description = "core_fraction"
+}
+```
 
 ---
 
@@ -94,6 +363,15 @@ https://console.cloud.yandex.ru/folders/<ваш cloud_id>/vpc/security-groups.
 
 Ответ:
 
+outputs.tf
+```
+
+```
+
+вывод `terraform output`
+```
+
+```
 ---
 
 
@@ -147,10 +425,4 @@ https://console.cloud.yandex.ru/folders/<ваш cloud_id>/vpc/security-groups.
 ---
 
 ------
-### Правила приема работы
 
-В git-репозитории, в котором было выполнено задание к занятию "Введение в Terraform", создайте новую ветку terraform-02, закомитьте в эту ветку свой финальный код проекта. Ответы на задания и необходимые скриншоты оформите в md-файле в ветке terraform-02.
-
-В качестве результата прикрепите ссылку на ветку terraform-02 в вашем репозитории.
-
-**ВАЖНО! Удалите все созданные ресурсы**.
