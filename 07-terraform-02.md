@@ -274,10 +274,15 @@ resource "yandex_compute_instance" "platform_db" {
 
 vms_platform.tf
 ```
-## web vars
 variable "vm_web_name" {
   type        = string
   default     = "netology-develop-platform-web"
+  description = "platform name"
+}
+
+variable "vm_db_name" {
+  type        = string
+  default     = "netology-develop-platform-db"
   description = "platform name"
 }
 
@@ -293,30 +298,7 @@ variable "vm_web_family" {
   description = "image family"
 }
 
-variable "vm_web_cores" {
-  type        = number
-  default     = 2
-  description = "cores"
-}
 
-variable "vm_web_memory" {
-  type        = number
-  default     = 1
-  description = "memory"
-}
-
-variable "vm_web_core_fraction" {
-  type        = number
-  default     = 5
-  description = "core_fraction"
-}
-
-## db vars
-variable "vm_db_name" {
-  type        = string
-  default     = "netology-develop-platform-db"
-  description = "platform name"
-}
 
 variable "vm_db_platform_id" {
   type        = string
@@ -330,22 +312,30 @@ variable "vm_db_family" {
   description = "image family"
 }
 
-variable "vm_db_cores" {
-  type        = number
-  default     = 2
-  description = "cores"
+variable "vm_web_resources" {
+  type = map(any)
+  default = {
+    "cpu_cores"    = 2
+    "cpu_fraction" = 5
+    "memory"       = 1
+  }
 }
 
-variable "vm_db_memory" {
-  type        = number
-  default     = 2
-  description = "memory"
+variable "vm_db_resources" {
+  type = map(any)
+  default = {
+    "cpu_cores"    = 2
+    "cpu_fraction" = 20
+    "memory"       = 2
+  }
 }
 
-variable "vm_db_core_fraction" {
-  type        = number
-  default     = 20
-  description = "core_fraction"
+variable "metadata" {
+  type = map(any)
+  default = {
+    "serial-port-enable" = 1
+    "ssh-keys"           = "your_public_key"
+  }
 }
 ```
 
@@ -394,6 +384,88 @@ instance_external_ip = {
 
 Ответ:
 
+locals.tf
+```
+locals {
+  platform_name = "${var.vm_web_name}"
+  platform_db_name = "${var.vm_db_name}"
+}
+```
+
+main.tf
+```
+resource "yandex_vpc_network" "develop" {
+  name = var.vpc_name
+}
+resource "yandex_vpc_subnet" "develop" {
+  name           = var.vpc_name
+  zone           = var.default_zone
+  network_id     = yandex_vpc_network.develop.id
+  v4_cidr_blocks = var.default_cidr
+}
+
+
+data "yandex_compute_image" "ubuntu" {
+  family = var.vm_web_family
+}
+resource "yandex_compute_instance" "platform" {
+  name        = local.platform_name
+  platform_id = var.vm_web_platform_id
+  resources {
+    cores         = 2
+    memory        = 1
+    core_fraction = 5
+  }
+  boot_disk {
+    initialize_params {
+      image_id = data.yandex_compute_image.ubuntu.image_id
+    }
+  }
+  scheduling_policy {
+    preemptible = true
+  }
+  network_interface {
+    subnet_id = yandex_vpc_subnet.develop.id
+    nat       = true
+  }
+
+  metadata = {
+    serial-port-enable = 1
+    ssh-keys           = "ubuntu:${var.vms_ssh_root_key}"
+  }
+
+}
+
+
+resource "yandex_compute_instance" "platform_db" {
+  name        = local.platform_db_name
+  platform_id = var.vm_web_platform_id
+  resources {
+    cores         = var.vm_db_cores
+    memory        = var.vm_db_memory
+    core_fraction = var.vm_db_core_fraction
+  }
+  boot_disk {
+    initialize_params {
+      image_id = data.yandex_compute_image.ubuntu.image_id
+    }
+  }
+  scheduling_policy {
+    preemptible = true
+  }
+  network_interface {
+    subnet_id = yandex_vpc_subnet.develop.id
+    nat       = true
+  }
+
+  metadata = {
+    serial-port-enable = 1
+    ssh-keys           = "ubuntu:${var.vms_ssh_root_key}"
+  }
+
+}
+```
+
 ---
 
 
@@ -407,6 +479,74 @@ instance_external_ip = {
 <--
 
 Ответ:
+
+vms_platform.tf
+```
+variable "vm_web_name" {
+  type        = string
+  default     = "netology-develop-platform-web"
+  description = "platform name"
+}
+
+variable "vm_db_name" {
+  type        = string
+  default     = "netology-develop-platform-db"
+  description = "platform name"
+}
+
+variable "vm_web_platform_id" {
+  type        = string
+  default     = "standard-v1"
+  description = "platform id"
+}
+
+variable "vm_web_family" {
+  type        = string
+  default     = "ubuntu-2004-lts"
+  description = "image family"
+}
+
+
+
+variable "vm_db_platform_id" {
+  type        = string
+  default     = "standard-v1"
+  description = "platform id"
+}
+
+variable "vm_db_family" {
+  type        = string
+  default     = "ubuntu-2004-lts"
+  description = "image family"
+}
+
+variable "vm_web_resources" {
+  type = map(any)
+  default = {
+    "cpu_cores"    = 2
+    "memory"       = 1
+	"core_fraction" = 5
+  }
+}
+
+variable "vm_db_resources" {
+  type = map(any)
+  default = {
+    "cpu_cores"    = 2
+    "memory"       = 2
+	"core_fraction" = 20
+  }
+}
+
+variable "metadata" {
+  type = map(any)
+  default = {
+    "serial-port-enable" = 1
+    "ssh-keys"           = "your_public_key"
+  }
+}
+```
+
 
 ---
 
@@ -423,13 +563,44 @@ instance_external_ip = {
 1. Напишите, какой командой можно отобразить **второй** элемент списка test_list?
 2. Найдите длину списка test_list с помощью функции length(<имя переменной>).
 3. Напишите, какой командой можно отобразить значение ключа admin из map test_map ?
-4. Напишите interpolation выражение, результатом которого будет: "John is admin for production server based on OS ubuntu-20-04 with X vcpu, Y ram and Z virtual disks", используйте данные из переменных test_list, test_map, servers и функцию length() для подстановки значений.
+4. Напишите interpolation выражение, результатом которого будет: 
+"John is admin for production server based on OS ubuntu-20-04 with X vcpu, Y ram and Z virtual disks", 
+используйте данные из переменных test_list, test_map, servers и функцию length() для подстановки значений.
+
+"${local.test_map.admin} is admin for ${local.servers[3]} server based on OS ${local.servers.production.image} with ${local.servers.production.cpu}" vcpu, ${local.servers.production.ram} ram and ${join(", ',local.servers.production.disks)} virtual disks" 
 
 В качестве решения предоставьте необходимые команды и их вывод.
 
 <--
 
 Ответ:
+
+1.
+```
+> local.test_list[1]
+"staging"
+```
+
+2.
+```
+> length(local.test_list)
+3
+```
+
+3.
+```
+> local.test_map["admin"]
+"John"
+```
+
+4.
+```
+> "${local.test_map.admin} is admin for production server based on OS ${local.servers.production.image} with ${local.servers.production.cpu} vcpu, ${local.servers.production.ram} ram and ${length(local.servers.production.disks)} virtual disks"
+"John is admin for production server based on OS ubuntu-20-04 with 10 vcpu, 40 ram and 4 virtual disks"
+```
+
+
+
 
 ---
 
