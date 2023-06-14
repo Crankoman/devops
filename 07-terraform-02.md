@@ -13,7 +13,7 @@
 3. Исходный код для выполнения задания расположен в директории [**02/src**](https://github.com/netology-code/ter-homeworks/tree/main/02/src).
 
 ### Итоговый код проекта 
-[код проекта]()
+[код проекта](https://github.com/Crankoman/devops/tree/terraform-02/src/ter-homeworks/02)
 
 ### Задание 0
 
