@@ -62,6 +62,116 @@
 
 Ответ:
 
+count-vm.tf
+```
+data "yandex_compute_image" "ubuntu" {
+  family = "ubuntu-2004-lts"
+}
+
+resource "yandex_compute_instance" "webs" {
+  count       = 2
+  name        = "web-${count.index+1}"
+  platform_id = "standart-v2"
+  resources {
+    cores         = 2
+    memory        = 0.5
+    core_fraction = 5
+  }
+  boot_disk {
+    initialize_params {
+      image_id = data.yandex_compute_image.ubuntu.image_id
+    }
+  }
+  scheduling_policy {
+    preemptible = true
+  }
+  network_interface {
+    subnet_id          = yandex_vpc_subnet.develop.id
+    nat                = true
+    security_group_ids = [yandex_vpc_security_group.example.id]
+  }
+  metadata = local.ssh_keys_and_serial_port
+}
+```
+
+for_each-vm.tf
+
+```
+variable "redis_vars" {
+  type = list(object({
+    vm_name   = string
+    cpu       = number
+    ram       = number
+    disk      = number
+    core_frac = number
+  }))
+  default = [
+    {
+      vm_name   = "main"
+      cpu       = 3
+      ram       = 1
+      disk      = 5
+      core_frac = 5
+    }, {
+      vm_name   = "replica"
+      cpu       = 2
+      ram       = 0.5
+      disk      = 10
+      core_frac = 10
+    },
+  ]
+}
+
+
+resource "yandex_compute_instance" "redis" {
+
+  depends_on = [yandex_compute_instance.webs]
+
+  for_each    = {for vm in var.redis_vars : vm.vm_name => vm}
+  platform_id = "standart-v2"
+  name        = each.value.vm_name
+
+  resources {
+    cores         = each.value.cpu
+    memory        = each.value.ram
+    core_fraction = each.value.core_frac
+  }
+
+  boot_disk {
+    initialize_params {
+      image_id = data.yandex_compute_image.ubuntu.image_id
+      type     = "network-hdd"
+      size     = each.value.disk
+    }
+  }
+
+  scheduling_policy {
+    preemptible = true
+  }
+
+  network_interface {
+    subnet_id          = yandex_vpc_subnet.develop.id
+    nat                = true
+    security_group_ids = [yandex_vpc_security_group.example.id]
+  }
+
+  metadata = local.ssh_keys_and_serial_port
+}
+
+```
+
+locals.tf
+```
+locals {
+  ssh_keys_and_serial_port = {
+    ssh-keys           = "ubuntu:${file("~/.ssh/id_rsa.pub")}"
+    serial-port-enable = 1
+  }
+}
+```
+
+Проверяем:
+![Результат1](img/2023-06-25_09-37-39.png)
 
 ------
 
@@ -74,6 +184,52 @@
 
 Ответ:
 
+disk_vm.tf
+```
+resource "yandex_compute_disk" "develop" {
+  count = 3
+  name  = "disk_vm-${count.index}"
+  type  = "network-hdd"
+  size  = 1
+}
+
+resource "yandex_compute_instance" "storage" {
+  name        = "storage"
+  platform_id = "standard-v1"
+
+  resources {
+    cores         = 2
+    memory        = 0.5
+    core_fraction = 5
+  }
+  boot_disk {
+    initialize_params {
+      image_id = data.yandex_compute_image.ubuntu.image_id
+      type     = "network-hdd"
+      size     = 5
+    }
+  }
+
+  dynamic "secondary_disk" {
+    for_each = yandex_compute_disk.develop
+    content {
+      disk_id     = secondary_disk.value.id
+      auto_delete = true
+    }
+  }
+
+  scheduling_policy {
+    preemptible = true
+  }
+  network_interface {
+    subnet_id          = yandex_vpc_subnet.develop.id
+    nat                = true
+    security_group_ids = [yandex_vpc_security_group.example.id]
+  }
+
+  metadata = local.ssh_keys_and_serial_port
+}
+```
 
 ------
 
@@ -86,8 +242,6 @@
 2. Инвентарь должен содержать 3 группы [webservers], [databases], [storage] и быть динамическим, т.е. обработать как группу из 2-х ВМ так и 999 ВМ.
 4. Выполните код. Приложите скриншот получившегося файла. 
 
-Для общего зачета создайте в вашем GitHub репозитории новую ветку terraform-03. Закомитьте в эту ветку свой финальный код проекта, пришлите ссылку на коммит.   
-**Удалите все созданные ресурсы**.
 
 <--
 
