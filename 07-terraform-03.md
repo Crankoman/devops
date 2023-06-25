@@ -186,10 +186,11 @@ locals {
 
 disk_vm.tf
 ```
-resource "yandex_compute_disk" "develop" {
+resource "yandex_compute_disk" "disk" {
   count = 3
-  name  = "disk_vm-${count.index}"
+  name  = "disk-${count.index}"
   type  = "network-hdd"
+  zone  = var.default_zone
   size  = 1
 }
 
@@ -199,7 +200,7 @@ resource "yandex_compute_instance" "storage" {
 
   resources {
     cores         = 2
-    memory        = 0.5
+    memory        = 1
     core_fraction = 5
   }
   boot_disk {
@@ -210,11 +211,10 @@ resource "yandex_compute_instance" "storage" {
     }
   }
 
-  dynamic "secondary_disk" {
-    for_each = yandex_compute_disk.develop
+  dynamic secondary_disk {
+    for_each = yandex_compute_disk.disk
     content {
-      disk_id     = secondary_disk.value.id
-      auto_delete = true
+      disk_id     = yandex_compute_disk.disk[secondary_disk.key].id
     }
   }
 
@@ -247,13 +247,59 @@ resource "yandex_compute_instance" "storage" {
 
 Ответ:
 
+ansible.tf
+```
+resource "local_file" "hosts_cfg" {
+  depends_on = [yandex_compute_instance.webs, yandex_compute_instance.redis, yandex_compute_instance.storage]
+  content    = templatefile("${path.module}/hosts.tftpl",
+
+    {
+      webservers = yandex_compute_instance.webs, databases = yandex_compute_instance.redis,
+      storage    = [yandex_compute_instance.storage]
+    }
+  )
+
+  filename = "${abspath(path.module)}/hosts.cfg"
+}
+
+
+resource "null_resource" "web_hosts_provision" {
+  #Ждем создания инстанса
+  depends_on = [yandex_compute_instance.webs, yandex_compute_instance.redis, yandex_compute_instance.storage]
+
+  #Добавление ПРИВАТНОГО ssh ключа в ssh-agent
+  provisioner "local-exec" {
+    command = "val $(ssh-agent -s) && echo $? | cat ~/.ssh/id_rsa | ssh-add -"
+  }
+
+  #Костыль!!! Даем ВМ время на первый запуск. Лучше выполнить это через wait_for port 22 на стороне ansible
+  provisioner "local-exec" {
+    command = "sleep 30"
+  }
+
+  #Запуск ansible-playbook
+  provisioner "local-exec" {
+    command     = "export ANSIBLE_HOST_KEY_CHECKING=False; ansible-playbook -i ${abspath(path.module)}/hosts.cfg ${abspath(path.module)}/test.yml"
+    on_failure  = continue #Продолжить выполнение terraform pipeline в случае ошибок
+    environment = { ANSIBLE_HOST_KEY_CHECKING = "False" }
+    #срабатывание триггера при изменении переменных
+  }
+  triggers = {
+    always_run        = timestamp() #всегда т.к. дата и время постоянно изменяются
+    playbook_src_hash = file("${abspath(path.module)}/test.yml") # при изменении содержимого playbook файла
+    ssh_public_key    = file("~/.ssh/id_rsa.pub") # при изменении переменной
+  }
+
+}
+```
+
+Результат:
+
+![Результат4](img/2023-06-25_19-30-00.png)
 
 ------
 
 ## Дополнительные задания (со звездочкой*)
-
-**Настоятельно рекомендуем выполнять все задания под звёздочкой.**   Их выполнение поможет глубже разобраться в материале.   
-Задания под звёздочкой дополнительные (необязательные к выполнению) и никак не повлияют на получение вами зачета по этому домашнему заданию. 
 
 ### Задание 5*(необязательное)
 1. Напишите output, который отобразит все 5 созданных ВМ в виде списка словарей:

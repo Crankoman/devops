@@ -1,7 +1,8 @@
-resource "yandex_compute_disk" "develop" {
+resource "yandex_compute_disk" "disk" {
   count = 3
-  name  = "disk_vm-${count.index}"
+  name  = "disk-${count.index}"
   type  = "network-hdd"
+  zone  = var.default_zone
   size  = 1
 }
 
@@ -11,7 +12,7 @@ resource "yandex_compute_instance" "storage" {
 
   resources {
     cores         = 2
-    memory        = 0.5
+    memory        = 1
     core_fraction = 5
   }
   boot_disk {
@@ -22,11 +23,10 @@ resource "yandex_compute_instance" "storage" {
     }
   }
 
-  dynamic "secondary_disk" {
-    for_each = yandex_compute_disk.develop
+  dynamic secondary_disk {
+    for_each = yandex_compute_disk.disk
     content {
-      disk_id     = secondary_disk.value.id
-      auto_delete = true
+      disk_id     = yandex_compute_disk.disk[secondary_disk.key].id
     }
   }
 
