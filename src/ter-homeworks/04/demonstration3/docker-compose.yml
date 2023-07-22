@@ -3,7 +3,7 @@ services:
   vault:
       hostname: vault
       container_name: vault
-      image: vault
+      image: hashicorp/vault
       environment:
         VAULT_ADDR: "http://0.0.0.0:8200"
         VAULT_API_ADDR: "http://0.0.0.0:8200"
