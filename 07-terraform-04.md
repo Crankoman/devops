@@ -21,6 +21,63 @@
 
 Ответ:
 
+main.tf
+```
+...
+module "test-vm" {
+  source         = "git::https://github.com/udjin10/yandex_compute_instance.git?ref=main"
+  env_name       = "develop"
+  network_id     = yandex_vpc_network.develop.id
+  subnet_zones   = ["ru-central1-a"]
+  subnet_ids     = [yandex_vpc_subnet.develop.id]
+  instance_name  = "web"
+  instance_count = 1
+  image_family   = "ubuntu-2004-lts"
+  public_ip      = true
+
+  metadata = {
+    user-data          = data.template_file.cloudinit.rendered #Для демонстрации №3
+    serial-port-enable = 1
+  }
+
+}
+
+#Пример передачи cloud-config в ВМ для демонстрации №3
+data "template_file" "cloudinit" {
+  template = file("./cloud-init.yml")
+  vars     = {
+    ssh_public_key = var.ssh_public_key
+  }
+}
+```
+
+variables.tf
+```
+...
+variable ssh_public_key {
+  type = string
+  default = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC8swvFYAaYlCE0Kh8YrokY+MNB0fp0OPefbytHqEkGrTWUnB74nBbiKj1gLxc15+BpFlbywP8MgRmFPHWAampy+CEZt/npYe73MnCgHKMTXynuzU5F1kIj1fb1E29RcXVIpvLHRtha4Af0hx9uIHw3Pee1V58VFPKHdubuLHzy8lXwXcWv4XbaDamHUh3//QddtGhBCKx1VOY6PuIK21z6BTjrTytbsIVQZYmFNmU8ylEu01PKCq3Ivoqih6QaOHmDzVshZNpQ+9NkHHtJbd36FQoddrohTlUvcb8hkf5FaCaGePIsbBPCv0QftuKyOUleAUy9TNxlk1KZE/UTIUgoJb9sU58CkRfy/z8+rAiUkDinlEdkLhUlXyMmd9tAsHujGTZZZFKbDnw37TplPC/TR7i7N2AtYEiYACIjAe0OVOfcgQrZJsj5sryrcFZxBRdfdoJTw7azGxTN71CD3plvuRfT9TvAWfNdOm/X8WYl5vs0VcbucRcv1jh5zq2vW00= root@4SER-1670916090.4server.su"
+}
+```
+
+cloud-init.yml
+```
+#cloud-config
+users:
+  - name: ubuntu
+    groups: sudo
+    shell: /bin/bash
+    sudo: ['ALL=(ALL) NOPASSWD:ALL']
+    ssh_authorized_keys:
+      - ${ssh_public_key}
+package_update: true
+package_upgrade: false
+packages:
+ - vim
+ - nginx
+```
+
+![Скриншот ответа](img/2023-07-22_20-52-45.png)
 
 ------
 
@@ -45,7 +102,51 @@ module "vpc_dev" {
 
 Ответ:
 
+[main.tf](src%2Fter-homeworks%2F04%2Fsrc%2Fvpc%2Fmain.tf)
+[outputs.tf](src%2Fter-homeworks%2F04%2Fsrc%2Fvpc%2Foutputs.tf)
+[variables.tf](src%2Fter-homeworks%2F04%2Fsrc%2Fvpc%2Fvariables.tf)
+[version.tf](src%2Fter-homeworks%2F04%2Fsrc%2Fvpc%2Fversion.tf)
+README.md
+```
+## Requirements
 
+| Name | Version |
+|------|---------|
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >=0.13 |
+
+## Providers
+
+| Name | Version |
+|------|---------|
+| <a name="provider_yandex"></a> [yandex](#provider\_yandex) | n/a |
+
+## Modules
+
+No modules.
+
+## Resources
+
+| Name | Type |
+|------|------|
+| [yandex_vpc_network.develop_vpc](https://registry.terraform.io/providers/yandex-cloud/yandex/latest/docs/resources/vpc_network) | resource |
+| [yandex_vpc_subnet.develop_vpc_subnet](https://registry.terraform.io/providers/yandex-cloud/yandex/latest/docs/resources/vpc_subnet) | resource |
+
+## Inputs
+
+| Name | Description | Type | Default | Required |
+|------|-------------|------|---------|:--------:|
+| <a name="input_labels"></a> [labels](#input\_labels) | Labels to mark resources. | `map(string)` | `{}` | no |
+| <a name="input_subnets"></a> [subnets](#input\_subnets) | vpc\_subnets description | <pre>map(object({<br>    zone = string<br>    cidr = string<br>  }))</pre> | n/a | yes |
+| <a name="input_vpc_name"></a> [vpc\_name](#input\_vpc\_name) | vpc description | `string` | `"vpc"` | no |
+
+## Outputs
+
+| Name | Description |
+|------|-------------|
+| <a name="output_subnets_locations"></a> [subnets\_locations](#output\_subnets\_locations) | subnets\_locations |
+| <a name="output_vpc_id"></a> [vpc\_id](#output\_vpc\_id) | vpc\_id |
+
+```
 
 ------
 
@@ -56,119 +157,100 @@ module "vpc_dev" {
 4. Импортируйте все обратно. Проверьте terraform plan - изменений быть не должно.
 Приложите список выполненных команд и скриншоты процессы.
 
-## Дополнительные задания (со звездочкой*)
-
-**Настоятельно рекомендуем выполнять все задания под звёздочкой.**   Их выполнение поможет глубже разобраться в материале.   
-Задания под звёздочкой дополнительные (необязательные к выполнению) и никак не повлияют на получение вами зачета по этому домашнему заданию. 
-
 <--
 
 Ответ:
 
+```commandline
+terraform apply
 
+Terraform used the selected providers to generate the following execution plan. Resource actions are indicated with the following symbols:
+  + create
 
-------
+Terraform will perform the following actions:
 
-### Задание 4*
+  # module.vpc.yandex_vpc_network.develop_vpc will be created
+  + resource "yandex_vpc_network" "develop_vpc" {
+      + created_at                = (known after apply)
+      + default_security_group_id = (known after apply)
+      + description               = "vpc description"
+      + folder_id                 = (known after apply)
+      + id                        = (known after apply)
+      + labels                    = (known after apply)
+      + name                      = "vpc"
+      + subnet_ids                = (known after apply)
+    }
 
-<--
+  # module.vpc.yandex_vpc_subnet.develop_vpc_subnet["public-ru-central1-a"] will be created
+  + resource "yandex_vpc_subnet" "develop_vpc_subnet" {
+      + created_at     = (known after apply)
+      + description    = "vpc description"
+      + folder_id      = (known after apply)
+      + id             = (known after apply)
+      + labels         = (known after apply)
+      + name           = "public-ru-central1-a"
+      + network_id     = (known after apply)
+      + v4_cidr_blocks = [
+          + "10.0.1.0/24",
+        ]
+      + v6_cidr_blocks = (known after apply)
+      + zone           = "ru-central1-a"
+    }
 
-Ответ:
+Plan: 2 to add, 0 to change, 0 to destroy.
 
+Do you want to perform these actions?
+  Terraform will perform the actions described above.
+  Only 'yes' will be accepted to approve.
 
+  Enter a value: yes
 
-------
+module.vpc.yandex_vpc_network.develop_vpc: Creating...
+module.vpc.yandex_vpc_network.develop_vpc: Creation complete after 2s [id=enp5aerjdo4omd02rho1]
+module.vpc.yandex_vpc_subnet.develop_vpc_subnet["public-ru-central1-a"]: Creating...
+module.vpc.yandex_vpc_subnet.develop_vpc_subnet["public-ru-central1-a"]: Creation complete after 1s [id=e9bughfh0p23jfrumra6]
 
-1. Измените модуль vpc так, чтобы он мог создать подсети во всех зонах доступности, переданных в переменной типа list(object) при вызове модуля.  
-  
-Пример вызова:
+Apply complete! Resources: 2 added, 0 changed, 0 destroyed.
+
+terraform state list
+module.vpc.yandex_vpc_network.develop_vpc
+module.vpc.yandex_vpc_subnet.develop_vpc_subnet["public-ru-central1-a"]
+
+terraform state rm module.vpc
+Removed module.vpc.yandex_vpc_network.develop_vpc
+Removed module.vpc.yandex_vpc_subnet.develop_vpc_subnet["public-ru-central1-a"]
+Successfully removed 2 resource instance(s).
+
+terraform import 'module.vpc.yandex_vpc_network.develop_vpc' enp5aerjdo4omd02rho1
+module.vpc.yandex_vpc_network.develop_vpc: Importing from ID "enph0dj3pod36r4mj1qs"...
+module.vpc.yandex_vpc_network.develop_vpc: Import prepared!
+  Prepared yandex_vpc_network for import
+module.vpc.yandex_vpc_network.develop_vpc: Refreshing state... [id=enph0dj3pod36r4mj1qs]
+
+Import successful!
+
+The resources that were imported are shown above. These resources are now in
+your Terraform state and will henceforth be managed by Terraform.
+
+terraform import 'module.vpc.yandex_vpc_subnet.develop_vpc_subnet["public-ru-central1-a"]' e9bughfh0p23jfrumra6
+module.vpc.yandex_vpc_subnet.develop_vpc_subnet["public-ru-central1-a"]: Importing from ID "e9bughfh0p23jfrumra6"...
+module.vpc.yandex_vpc_subnet.develop_vpc_subnet["public-ru-central1-a"]: Import prepared!
+  Prepared yandex_vpc_subnet for import
+module.vpc.yandex_vpc_subnet.develop_vpc_subnet["public-ru-central1-a"]: Refreshing state... [id=e9bughfh0p23jfrumra6]
+
+Import successful!
+
+The resources that were imported are shown above. These resources are now in
+your Terraform state and will henceforth be managed by Terraform.
+
+terraform plan
+module.vpc.yandex_vpc_network.develop_vpc: Refreshing state... [id=enp5aerjdo4omd02rho1]
+module.vpc.yandex_vpc_subnet.develop_vpc_subnet["public-ru-central1-a"]: Refreshing state... [id=e9bughfh0p23jfrumra6]
+
+No changes. Your infrastructure matches the configuration.
+
+Terraform has compared your real infrastructure against your configuration and found no differences, so no changes are needed.
 ```
-module "vpc_prod" {
-  source       = "./vpc"
-  env_name     = "production"
-  subnets = [
-    { zone = "ru-central1-a", cidr = "10.0.1.0/24" },
-    { zone = "ru-central1-b", cidr = "10.0.2.0/24" },
-    { zone = "ru-central1-c", cidr = "10.0.3.0/24" },
-  ]
-}
-
-module "vpc_dev" {
-  source       = "./vpc"
-  env_name     = "develop"
-  subnets = [
-    { zone = "ru-central1-a", cidr = "10.0.1.0/24" },
-  ]
-}
-```
-
-Предоставьте код, план выполнения, результат из консоли YC.
-
-<--
-
-Ответ:
-
-
-
-------
-
-### Задание 5***
-
-1. Напишите модуль для создания кластера managed БД Mysql в Yandex Cloud с 1 или 3 хостами в зависимости от переменной HA=true или HA=false. Используйте ресурс yandex_mdb_mysql_cluster (передайте имя кластера и id сети).
-2. Напишите модуль для создания базы данных и пользователя в уже существующем кластере managed БД Mysql. Используйте ресурсы yandex_mdb_mysql_database и yandex_mdb_mysql_user (передайте имя базы данных, имя пользователя и id кластера при вызове модуля).
-3. Используя оба модуля, создайте кластер example из одного хоста, а затем добавьте в него БД test и пользователя app. Затем измените переменную и превратите сингл хост в кластер из 2х серверов.
-4. 
-Предоставьте план выполнения и по-возможности результат. Сразу же удаляйте созданные ресурсы, так как кластер может стоить очень дорого! Используйте минимальную конфигурацию.
-
-<--
-
-Ответ:
-
-
-
-------
-
-### Задание 6*
-
-1. Разверните у себя локально vault, используя docker-compose.yml в проекте.
-2. Для входа в web интерфейс и авторизации terraform в vault используйте токен "education"
-3. Создайте новый секрет по пути http://127.0.0.1:8200/ui/vault/secrets/secret/create  
-Path: example  
-secret data key: test 
-secret data value: congrats!  
-4. Считайте данный секрет с помощью terraform и выведите его в output по примеру:
-```
-provider "vault" {
- address = "http://<IP_ADDRESS>:<PORT_NUMBER>"
- skip_tls_verify = true
- token = "education"
-}
-data "vault_generic_secret" "vault_example"{
- path = "secret/example"
-}
-
-output "vault_example" {
- value = "${nonsensitive(data.vault_generic_secret.vault_example.data)}"
-} 
-
-можно обратится не к словарю, а конкретному ключу.
-terraform console: >nonsensitive(data.vault_generic_secret.vault_example.data.<имя ключа в секрете>)
-```
-
-<--
-
-Ответ:
-
-
-
-------
-
-5. Попробуйте самостоятельно разобраться в документации и записать новый секрет в vault с помощью terraform. 
-
-<--
-
-Ответ:
-
 
 
 ------

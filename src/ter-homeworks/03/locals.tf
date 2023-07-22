@@ -1,6 +1,6 @@
 locals {
   ssh_keys_and_serial_port = {
-    ssh-keys           = "ubuntu:${file("~/.ssh/id_rsa.pub")}"
+    ssh-keys           = "ubuntu:"
     serial-port-enable = 1
   }
 }
