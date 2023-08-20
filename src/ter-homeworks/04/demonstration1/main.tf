@@ -5,6 +5,18 @@ terraform {
     }
   }
   required_version = ">=0.13"
+
+
+  backend "s3" {
+    endpoint                    = "storage.yandexcloud.net"
+    bucket                      = "tfstate-develop-crankoman"
+    region                      = "ru-central1"
+    key                         = "terraform.tfstate"
+    skip_region_validation      = true
+    skip_credentials_validation = true
+    dynamodb_endpoint           = "https://docapi.serverless.yandexcloud.net/ru-central1/b1g6121uk1rv68o6cmjm/etnpgsbs4j3h5gr4ked9"
+    dynamodb_table              = "tflock-develop"
+  }
 }
 
 provider "yandex" {
