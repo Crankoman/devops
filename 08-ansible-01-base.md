@@ -2,9 +2,38 @@
 
 ## Основная часть
 
+0. Установим ansible и docker-модуль для python
+```commandline
+pip3 install ansible
+ansible-galaxy collection install community.docker
+```
+
 1. Попробуйте запустить playbook на окружении из `test.yml`, зафиксируйте значение, которое имеет факт `some_fact` для указанного хоста при выполнении playbook.
 
 <-- Ответ
+Запускаем плейбук на окружении test `ansible-playbook site.yml -i inventory/test.yml`
+
+```commandline
+PLAY [Print os facts] *****************************************************************************************************************************
+
+TASK [Gathering Facts] ****************************************************************************************************************************
+ok: [localhost]
+
+TASK [Print OS] ***********************************************************************************************************************************
+ok: [localhost] => {
+    "msg": "Ubuntu"
+}
+
+TASK [Print fact] *********************************************************************************************************************************
+ok: [localhost] => {
+    "msg": 12
+}
+
+PLAY RECAP ****************************************************************************************************************************************
+localhost                  : ok=3    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+```
+
+Ответ: `12` т.к. ОС - Ubuntu
 
 ---
 
@@ -12,11 +41,53 @@
 
 <-- Ответ
 
+Меняем значение в файле `group_vars/all/examp.yml` `sed -i 's/12/all default fact/' group_vars/all/examp.yml`
+
+Проверяем `ansible-playbook site.yml -i inventory/test.yml`
+
+```commandline
+PLAY [Print os facts] *****************************************************************************************************************************
+
+TASK [Gathering Facts] ****************************************************************************************************************************
+ok: [localhost]
+
+TASK [Print OS] ***********************************************************************************************************************************
+ok: [localhost] => {
+    "msg": "Ubuntu"
+}
+
+TASK [Print fact] *********************************************************************************************************************************
+ok: [localhost] => {
+    "msg": "all default fact"
+}
+
+PLAY RECAP ****************************************************************************************************************************************
+localhost                  : ok=3    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+```
+
 ---
 
 3. Воспользуйтесь подготовленным (используется `docker`) или создайте собственное окружение для проведения дальнейших испытаний.
 
 <-- Ответ
+
+Подготовим `docker-compose.yml` и запустим его `docker-compose up -d`
+```dockerfile
+version: '3.9'
+services:
+  centos7:
+    image: pycontribs/centos:7
+    container_name: centos7
+    restart: unless-stopped
+    entrypoint: "sleep infinity"
+
+  ubuntu:
+    image: pycontribs/ubuntu
+    container_name: ubuntu
+    restart: unless-stopped
+    entrypoint: "sleep infinity"
+
+```
 
 ---
  
@@ -24,18 +95,84 @@
  
 <-- Ответ
 
+Запускаем `ansible-playbook site.yml -i inventory/prod.yml`
+
+```commandline
+PLAY [Print os facts] *****************************************************************************************************************************
+
+TASK [Gathering Facts] ****************************************************************************************************************************
+ok: [ubuntu]
+ok: [centos7]
+
+TASK [Print OS] ***********************************************************************************************************************************
+ok: [centos7] => {
+    "msg": "CentOS"
+}
+ok: [ubuntu] => {
+    "msg": "Ubuntu"
+}
+
+TASK [Print fact] *********************************************************************************************************************************
+ok: [centos7] => {
+    "msg": "el"
+}
+ok: [ubuntu] => {
+    "msg": "deb"
+}
+
+PLAY RECAP ****************************************************************************************************************************************
+centos7                    : ok=3    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+ubuntu                     : ok=3    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+```
+
+centos -> el
+
+ubuntu -> deb
+
 ---
 
 5. Добавьте факты в `group_vars` каждой из групп хостов так, чтобы для `some_fact` получились значения: для `deb` — `deb default fact`, для `el` — `el default fact`.
  
 <-- Ответ
+```commandline
+sed -i 's/deb/deb default fact/' group_vars/deb/examp.yml
+sed -i 's/el/el default fact/' group_vars/el/examp.yml
+```
 
 ---
 
 6. Повторите запуск playbook на окружении `prod.yml`. Убедитесь, что выдаются корректные значения для всех хостов.
 
 <-- Ответ
+```commandline
+ansible-playbook site.yml -i inventory/prod.yml
 
+PLAY [Print os facts] *****************************************************************************************************************************
+
+TASK [Gathering Facts] ****************************************************************************************************************************
+ok: [ubuntu]
+ok: [centos7]
+
+TASK [Print OS] ***********************************************************************************************************************************
+ok: [centos7] => {
+    "msg": "CentOS"
+}
+ok: [ubuntu] => {
+    "msg": "Ubuntu"
+}
+
+TASK [Print fact] *********************************************************************************************************************************
+ok: [centos7] => {
+    "msg": "el default fact"
+}
+ok: [ubuntu] => {
+    "msg": "deb default fact"
+}
+
+PLAY RECAP ****************************************************************************************************************************************
+centos7                    : ok=3    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+ubuntu                     : ok=3    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+```
 ---
  
 7. При помощи `ansible-vault` зашифруйте факты в `group_vars/deb` и `group_vars/el` с паролем `netology`.
