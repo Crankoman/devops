@@ -1,5 +1,7 @@
 # Домашнее задание к занятию 1 «Введение в Ansible»
 
+Файлы задания: https://github.com/Crankoman/devops/tree/main/ansible/01
+
 ## Основная часть
 
 0. Установим ansible и docker-модуль для python
@@ -72,7 +74,7 @@ localhost                  : ok=3    changed=0    unreachable=0    failed=0    s
 <-- Ответ
 
 Подготовим `docker-compose.yml` и запустим его `docker-compose up -d`
-```dockerfile
+```yaml
 version: '3.9'
 services:
   centos7:
@@ -196,7 +198,7 @@ $ANSIBLE_VAULT;1.1;AES256
 
 `ansible-vault encrypt group_vars/el/examp.yml`
 
-```commandline
+```yaml
 New Vault password:
 Confirm New Vault password:
 Encryption successful
@@ -271,7 +273,7 @@ community.docker.nsenter     execute on host running controller container
 
 `inventory/prod.yml`
 
-```
+```yaml
 ---
   el:
     hosts:
@@ -340,8 +342,9 @@ ubuntu                     : ok=3    changed=0    unreachable=0    failed=0    s
 
 <-- Ответ
 
-https://github.com/Crankoman/devops/tree/main/ansible/01
+Файлы задания: https://github.com/Crankoman/devops/tree/main/ansible/01
 
+https://github.com/Crankoman/devops/blob/main/08-ansible-01-base.md
 
 ---
 
@@ -351,11 +354,47 @@ https://github.com/Crankoman/devops/tree/main/ansible/01
 
 <-- Ответ
 
+`ansible-vault decrypt --ask-vault-password group_vars/deb/examp.yml group_vars/el/examp.yml`
+
+```commandline
+Vault password:
+Decryption successful
+```
+
+`cat group_vars/deb/examp.yml group_vars/el/examp.yml`
+
+```yaml
+---
+  some_fact: "deb default fact"
+---
+  some_fact: "el default fact"r
+```
+
 ---
  
 2. Зашифруйте отдельное значение `PaSSw0rd` для переменной `some_fact` паролем `netology`. Добавьте полученное значение в `group_vars/all/exmp.yml`.
 
 <-- Ответ
+
+`ansible-vault encrypt_string "PaSSw0rd" --name 'some_fact' | sed '1s/^/---\n/' > group_vars/all/examp.yml`
+
+```commandline
+New Vault password:
+Confirm New Vault password:
+```
+
+`cat group_vars/all/examp.yml`
+
+```yaml
+---
+some_fact: !vault |
+          $ANSIBLE_VAULT;1.1;AES256
+          36366361376364323434663262303262316364613136653964613236323263343632363437303539
+          3932333363616430343333643934643561653866316165610a323333373464313466656438356664
+          66626661333565623964373666623236393137366562333432366162616135643064336261613437
+          3530383136623035620a336461336533303965343235363236663965393663666163303865396263
+          3637
+```
 
 ---
  
@@ -363,11 +402,156 @@ https://github.com/Crankoman/devops/tree/main/ansible/01
 
 <-- Ответ
 
+`ansible-playbook -i inventory/prod.yml site.yml --ask-vault-pass`
+
+```commandline
+Vault password:
+
+PLAY [Print os facts] ******************************************************************************************************************************************
+
+TASK [Gathering Facts] *****************************************************************************************************************************************
+ok: [localhost]
+ok: [ubuntu]
+ok: [centos7]
+
+TASK [Print OS] ************************************************************************************************************************************************
+ok: [centos7] => {
+    "msg": "CentOS"
+}
+ok: [ubuntu] => {
+    "msg": "Ubuntu"
+}
+ok: [localhost] => {
+    "msg": "Ubuntu"
+}
+
+TASK [Print fact] **********************************************************************************************************************************************
+ok: [centos7] => {
+    "msg": "el default fact"
+}
+ok: [ubuntu] => {
+    "msg": "deb default fact"
+}
+ok: [localhost] => {
+    "msg": "PaSSw0rd"
+}
+
+PLAY RECAP *****************************************************************************************************************************************************
+centos7                    : ok=3    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+localhost                  : ok=3    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+ubuntu                     : ok=3    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+```
+
 ---
 
 4. Добавьте новую группу хостов `fedora`, самостоятельно придумайте для неё переменную. В качестве образа можно использовать [этот вариант](https://hub.docker.com/r/pycontribs/fedora).
 
 <-- Ответ
+
+`inventory/prod.yml`
+
+```yaml
+---
+  el:
+    hosts:
+      centos7:
+        ansible_connection: docker
+  deb:
+    hosts:
+      ubuntu:
+        ansible_connection: docker
+
+  local:
+    hosts:
+      localhost:
+        ansible_connection: local
+
+  fed:
+    hosts:
+      fedora:
+        ansible_connection: docker
+```
+
+`group_vars/fedora/examp.yml`
+
+```yaml
+---
+  some_fact: "fedora default fact"
+
+```
+
+`docker-compose.yml`
+
+```yaml
+version: '3.9'
+services:
+  centos7:
+    image: pycontribs/centos:7
+    container_name: centos7
+    restart: unless-stopped
+    entrypoint: "sleep infinity"
+
+  ubuntu:
+    image: pycontribs/ubuntu
+    container_name: ubuntu
+    restart: unless-stopped
+    entrypoint: "sleep infinity"
+
+  fedora:
+    image: pycontribs/fedora
+    container_name: fedora
+    restart: unless-stopped
+    entrypoint: "sleep infinity"
+```
+
+Проверяем `ansible-playbook -i inventory/prod.yml site.yml --ask-vault-pass`
+
+```commandline
+Vault password:
+
+PLAY [Print os facts] ******************************************************************************************************************************************
+
+TASK [Gathering Facts] *****************************************************************************************************************************************
+ok: [localhost]
+ok: [fedora]
+ok: [ubuntu]
+ok: [centos7]
+
+TASK [Print OS] ************************************************************************************************************************************************
+ok: [centos7] => {
+    "msg": "CentOS"
+}
+ok: [ubuntu] => {
+    "msg": "Ubuntu"
+}
+ok: [localhost] => {
+    "msg": "Ubuntu"
+}
+ok: [fedora] => {
+    "msg": "Fedora"
+}
+
+TASK [Print fact] **********************************************************************************************************************************************
+ok: [centos7] => {
+    "msg": "el default fact"
+}
+ok: [ubuntu] => {
+    "msg": "deb default fact"
+}
+ok: [localhost] => {
+    "msg": "PaSSw0rd"
+}
+ok: [fedora] => {
+    "msg": "PaSSw0rd"
+}
+
+PLAY RECAP *****************************************************************************************************************************************************
+centos7                    : ok=3    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+fedora                     : ok=3    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+localhost                  : ok=3    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+ubuntu                     : ok=3    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+```
+
 
 ---
 
@@ -375,18 +559,82 @@ https://github.com/Crankoman/devops/tree/main/ansible/01
 
 <-- Ответ
 
+`start.sh`
+
+```bash
+#/bin/bash
+docker compose up -d
+ansible-playbook -i inventory/prod.yml site.yml --vault-pass-file .pass_file
+docker compose down
+```
+
+проверяем 
+
+`chmod +x start.sh && ./start.sh`
+```commandline
+[+] Running 3/3
+ ✔ Container ubuntu   Started                                                                                                                             12.0s
+ ✔ Container fedora   Started                                                                                                                             11.9s
+ ✔ Container centos7  Started                                                                                                                             11.8s
+
+PLAY [Print os facts] ******************************************************************************************************************************************
+
+TASK [Gathering Facts] *****************************************************************************************************************************************
+ok: [localhost]
+ok: [fedora]
+ok: [ubuntu]
+ok: [centos7]
+
+TASK [Print OS] ************************************************************************************************************************************************
+ok: [centos7] => {
+    "msg": "CentOS"
+}
+ok: [ubuntu] => {
+    "msg": "Ubuntu"
+}
+ok: [localhost] => {
+    "msg": "Ubuntu"
+}
+ok: [fedora] => {
+    "msg": "Fedora"
+}
+
+TASK [Print fact] **********************************************************************************************************************************************
+ok: [centos7] => {
+    "msg": "el default fact"
+}
+ok: [ubuntu] => {
+    "msg": "deb default fact"
+}
+ok: [localhost] => {
+    "msg": "PaSSw0rd"
+}
+ok: [fedora] => {
+    "msg": "PaSSw0rd"
+}
+
+PLAY RECAP *****************************************************************************************************************************************************
+centos7                    : ok=3    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+fedora                     : ok=3    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+localhost                  : ok=3    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+ubuntu                     : ok=3    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+
+[+] Running 4/4
+ ✔ Container ubuntu          Removed                                                                                                                      10.7s
+ ✔ Container fedora          Removed                                                                                                                      10.6s
+ ✔ Container centos7         Removed                                                                                                                      10.6s
+ ✔ Network playbook_default  Removed  
+```
+
 ---
 
 7. Все изменения должны быть зафиксированы и отправлены в ваш личный репозиторий.
 
 <-- Ответ
 
----
+Файлы задания: https://github.com/Crankoman/devops/tree/main/ansible/01
+
+https://github.com/Crankoman/devops/blob/main/08-ansible-01-base.md
 
 ---
 
-### Как оформить решение задания
-
-Выполненное домашнее задание пришлите в виде ссылки на .md-файл в вашем репозитории.
-
----
