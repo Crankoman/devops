@@ -340,6 +340,9 @@ ubuntu                     : ok=3    changed=0    unreachable=0    failed=0    s
 
 <-- Ответ
 
+https://github.com/Crankoman/devops/tree/main/ansible/01
+
+
 ---
 
 ## Необязательная часть
