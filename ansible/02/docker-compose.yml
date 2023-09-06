@@ -8,6 +8,7 @@ services:
 
   vector-01:
     image: pycontribs/centos:7
+    privileged: true
     container_name: vector-01
     restart: unless-stopped
     entrypoint: "sleep infinity"
