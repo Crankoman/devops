@@ -3,12 +3,12 @@
   hosts: clickhouse
   handlers:
     - name: Start clickhouse service
-      become: true
       ansible.builtin.service:
         name: clickhouse-server
         state: restarted
   tasks:
-    - block:
+    - name: Install, configure, and start Clickhouse
+      block:
         - name: Get clickhouse distrib
           ansible.builtin.get_url:
             url: "https://packages.clickhouse.com/rpm/stable/{{ item }}-{{ clickhouse_version }}.x86_64.rpm"
@@ -26,9 +26,10 @@
           - clickhouse-common-static-{{ clickhouse_version }}.rpm
           - clickhouse-client-{{ clickhouse_version }}.rpm
           - clickhouse-server-{{ clickhouse_version }}.rpm
-      notify: Start clickhouse service
-    - name: Flush handlers
-      ansible.builtin.meta: flush_handlers
+      notify: 
+       - Start clickhouse service
+    # - name: Flush handlers
+    #   ansible.builtin.meta: flush_handlers
     - name: Create database
       ansible.builtin.command: "clickhouse-client -q 'create database logs;'"
       register: create_db
@@ -38,27 +39,29 @@
 - name: Install Vector
   hosts: vector
   handlers:
-   - name: Start vector service
-     ansible.builtin.command: /usr/bin/vector --config-yaml {{ vector_config_dir }}/vector.toml
-     tags: skip_ansible_lint
+    - name: Start vector service
+      ansible.builtin.service:
+        name: vector
+        state: restarted
   tasks:
-      - name: Install Vector distrib
-        become: true
-        ansible.builtin.yum:
-          name: "https://packages.timber.io/vector/{{ vector_version }}/vector-{{ vector_version }}-1.{{ arch }}.rpm"
-          state: present
-      - name: Configure Vector | ensure what directory exists
-        ansible.builtin.file:
-          path: "{{ vector_config_dir }}"
-          state: directory
-          mode: 0644
-          owner: root
-          group: root
-      - name: Configure Vector | Template config
-        ansible.builtin.template:
-          src: vector.toml.j2
-          mode: 0644
-          owner: root
-          group: root
-          dest: "{{ vector_config_dir }}/vector.toml"
-        notify: Start vector service
+    - name: Install Vector distrib
+      become: true
+      ansible.builtin.yum:
+        name: "https://packages.timber.io/vector/{{ vector_version }}/vector-{{ vector_version }}-1.{{ arch }}.rpm"
+        state: present
+    - name: Configure Vector | ensure what directory exists
+      ansible.builtin.file:
+        path: "{{ vector_config_dir }}"
+        state: directory
+        mode: 0644
+        owner: root
+        group: root
+    - name: Configure Vector | Template config
+      ansible.builtin.template:
+        src: vector.toml.j2
+        mode: 0644
+        owner: root
+        group: root
+        dest: "{{ vector_config_dir }}/vector.toml"
+      notify:
+        - Start vector service
