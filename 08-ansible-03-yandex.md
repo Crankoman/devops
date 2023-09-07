@@ -56,7 +56,7 @@
 - name: Install Vector
   hosts: vector
   handlers:
-    - name: Restart vector service
+    - name: Restart Vector service
       ansible.builtin.service:
         name: vector
         state: restarted
@@ -67,15 +67,17 @@
         name: "https://packages.timber.io/vector/{{ vector_version }}/vector-{{ vector_version }}-1.{{ arch }}.rpm"
         state: present
     - name: Setup vector config
+      become: true
       ansible.builtin.template:
         src: vector.yml.j2
-        dest: "/etc/vector/vector.yml"
+        dest: "/etc/vector/vector.toml"
         mode: "0644"
         owner: "{{ ansible_user_id }}"
         group: "{{ ansible_user_gid }}"
     - name: Vector systemd
+      become: true
       ansible.builtin.template:
-        src: /templates/vector.service.j2
+        src: vector.service.j2
         dest: /usr/lib/systemd/system/vector.service
         mode: "0644"
         owner: "{{ ansible_user_id }}"
@@ -107,7 +109,7 @@
     - name: Nginx setup config
       become: true
       ansible.builtin.template:
-        src: /templates/nginx.conf.j2
+        src: nginx.conf.j2
         dest: /etc/nginx/nginx.conf
         mode: "0644"
       notify: Reload-nginx
@@ -117,7 +119,7 @@
   handlers:
   - name: Reload-nginx
     become: true
-    ansible.builtin.command: nginx -s reload-nginx
+    ansible.builtin.command: nginx -s reload
   pre_tasks:
     - name: Install git
       become: true
@@ -126,6 +128,7 @@
         state: present
   tasks:
     - name: Copy from git
+      become: true
       ansible.builtin.git:
         repo: "{{ lighthouse_git }}"
         version: master
@@ -133,10 +136,11 @@
     - name: LightHouse setup config
       become: true
       ansible.builtin.template:
-        src: /templates/lighthouse.conf.j2
+        src: lighthouse.conf.j2
         dest: /etc/nginx/conf.d/default.conf
         mode: "0644"
       notify: Reload-nginx
+
 ```
 
 ---
@@ -172,6 +176,78 @@ lighthouse:
 7. Запустите playbook на `prod.yml` окружении с флагом `--diff`. Убедитесь, что изменения на системе произведены.
 8. Повторно запустите playbook с флагом `--diff` и убедитесь, что playbook идемпотентен.
 
+<-- Ответ
+
+```commandline
+ansible-playbook -i inventory/prod.yml site.yml --diff
+
+PLAY [Install Clickhouse] **************************************************************************************************************************************
+
+TASK [Gathering Facts] *****************************************************************************************************************************************
+ok: [clickhouse-01]
+
+TASK [Get clickhouse distrib] **********************************************************************************************************************************
+ok: [clickhouse-01] => (item=clickhouse-client)
+ok: [clickhouse-01] => (item=clickhouse-server)
+ok: [clickhouse-01] => (item=clickhouse-common-static)
+
+TASK [Install clickhouse packages] *****************************************************************************************************************************
+ok: [clickhouse-01]
+
+TASK [Flush handlers] ******************************************************************************************************************************************
+
+TASK [Create database] *****************************************************************************************************************************************
+ok: [clickhouse-01]
+
+PLAY [Install Vector] ******************************************************************************************************************************************
+
+TASK [Gathering Facts] *****************************************************************************************************************************************
+ok: [vector-01]
+
+TASK [Install Vector distrib] **********************************************************************************************************************************
+ok: [vector-01]
+
+TASK [Setup vector config] *************************************************************************************************************************************
+ok: [vector-01]
+
+TASK [Vector systemd] ******************************************************************************************************************************************
+ok: [vector-01]
+
+PLAY [Install Nginx] *******************************************************************************************************************************************
+
+TASK [Gathering Facts] *****************************************************************************************************************************************
+ok: [lighthouse-01]
+
+TASK [Install epel-release] ************************************************************************************************************************************
+ok: [lighthouse-01]
+
+TASK [Install nginx] *******************************************************************************************************************************************
+ok: [lighthouse-01]
+
+TASK [Nginx setup config] **************************************************************************************************************************************
+ok: [lighthouse-01]
+
+PLAY [Install LightHouse] **************************************************************************************************************************************
+
+TASK [Gathering Facts] *****************************************************************************************************************************************
+ok: [lighthouse-01]
+
+TASK [Install git] *********************************************************************************************************************************************
+ok: [lighthouse-01]
+
+TASK [Copy from git] *******************************************************************************************************************************************
+ok: [lighthouse-01]
+
+TASK [LightHouse setup config] *********************************************************************************************************************************
+ok: [lighthouse-01]
+
+PLAY RECAP *****************************************************************************************************************************************************
+clickhouse-01              : ok=4    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+lighthouse-01              : ok=8    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+vector-01                  : ok=4    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+
+```
+
 9. Подготовьте README.md-файл по своему playbook. В нём должно быть описано: что делает playbook, какие у него есть параметры и теги.
 
 <-- Ответ
@@ -187,5 +263,6 @@ https://github.com/Crankoman/devops/blob/main/ansible/03/README.md
 
 https://github.com/Crankoman/devops/blob/main/08-ansible-03-yandex.md
 
+![](/img/2023-09-08_00-09-38.png)
 ---
 
