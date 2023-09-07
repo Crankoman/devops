@@ -1,0 +1,6 @@
+---
+vector_version: "0.32.1"
+arch: "x86_64"
+vector_config_dir: "{{ ansible_user_dir }}/vector_config"
+# Vector config dir
+vector_config:
