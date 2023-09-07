@@ -170,50 +170,22 @@ lighthouse:
 5. Запустите `ansible-lint site.yml` и исправьте ошибки, если они есть.
 6. Попробуйте запустить playbook на этом окружении с флагом `--check`.
 7. Запустите playbook на `prod.yml` окружении с флагом `--diff`. Убедитесь, что изменения на системе произведены.
-
-<-- Ответ
-
-``
-
-```yaml
-
-```
-
----
-
 8. Повторно запустите playbook с флагом `--diff` и убедитесь, что playbook идемпотентен.
-
-<-- Ответ
-
-``
-
-```yaml
-
-```
-
----
 
 9. Подготовьте README.md-файл по своему playbook. В нём должно быть описано: что делает playbook, какие у него есть параметры и теги.
 
 <-- Ответ
 
-``
-
-```yaml
-
-```
-
+https://github.com/Crankoman/devops/blob/main/ansible/03/README.md
 ---
 
 10. Готовый playbook выложите в свой репозиторий, поставьте тег `08-ansible-03-yandex` на фиксирующий коммит, в ответ предоставьте ссылку на него.
 
 <-- Ответ
 
-``
+Файлы плейбука https://github.com/Crankoman/devops/tree/main/ansible/03
 
-```yaml
-
-```
+https://github.com/Crankoman/devops/blob/main/08-ansible-03-yandex.md
 
 ---
 
