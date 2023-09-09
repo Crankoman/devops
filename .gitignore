@@ -2,3 +2,4 @@ vagrant\disk\*
 vagrant\.vagrant\*
 .idea\*
 devops.imi
+/.vscode/
