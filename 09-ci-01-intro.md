@@ -49,12 +49,12 @@ Workflow bug
 
 ![](img/2023-09-09_22-20-05.png)
 
-XML 
+XML https://github.com/Crankoman/devops/blob/main/ci/01/bug%20workflow.xml
 
 Workflow task
 
 ![](img/2023-09-09_22-19-42.png)
 
-XML 
+XML https://github.com/Crankoman/devops/blob/main/ci/01/task%20workflow.xml
 
 ---
