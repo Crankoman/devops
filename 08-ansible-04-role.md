@@ -4,6 +4,14 @@
 
 1. * Необязательно. Познакомьтесь с [LightHouse](https://youtu.be/ymlrNlaHzIY?t=929).
 2. Создайте два пустых публичных репозитория в любом своём проекте: vector-role и lighthouse-role.
+
+<-- Ответ
+
+https://github.com/Crankoman/lighthouse-role
+https://github.com/Crankoman/vector-role
+
+---
+
 3. Добавьте публичную часть своего ключа к своему профилю на GitHub.
 
 ## Основная часть
@@ -27,7 +35,31 @@
    ```
 
 2. При помощи `ansible-galaxy` скачайте себе эту роль.
+
+<-- Ответ
+
+`ansible-galaxy install -r requirements.yml -p roles`
+
+```commandline
+Starting galaxy role install process
+- extracting clickhouse to /opt/mnt-homeworks/08-ansible-04-role/roles/clickhouse
+- clickhouse (1.13) was installed successfully
+```
+
+---
+
 3. Создайте новый каталог с ролью при помощи `ansible-galaxy role init vector-role`.
+
+<-- Ответ
+
+`ansible-galaxy role init vector-role`
+
+```commandline
+- Role vector-role was created successfully
+```
+
+---
+
 4. На основе tasks из старого playbook заполните новую role. Разнесите переменные между `vars` и `default`. 
 5. Перенести нужные шаблоны конфигов в `templates`.
 6. Опишите в `README.md` обе роли и их параметры. Пример качественной документации ansible role [по ссылке](https://github.com/cloudalchemy/ansible-prometheus).
@@ -37,4 +69,12 @@
 10. Выложите playbook в репозиторий.
 11. В ответе дайте ссылки на оба репозитория с roles и одну ссылку на репозиторий с playbook.
 
+<-- Ответ
+
+https://github.com/Crankoman/vector-role
+https://github.com/Crankoman/lighthouse-role
+
+Репозиторий с playbook https://github.com/Crankoman/devops/tree/main/ansible/04
+
 ---
+
