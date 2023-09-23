@@ -1,71 +1,14 @@
 ---
 - name: Install Clickhouse
   hosts: clickhouse
-  handlers:
-    - name: Restart clickhouse service
-      ansible.builtin.service:
-        name: clickhouse-server
-        state: restarted
-  tasks:
-    - name: Install, configure, and start Clickhouse
-      block:
-        - name: Get clickhouse distrib
-          ansible.builtin.get_url:
-            url: "https://packages.clickhouse.com/rpm/stable/{{ item }}-{{ clickhouse_version }}.x86_64.rpm"
-            dest: "./{{ item }}-{{ clickhouse_version }}.rpm"
-          with_items: "{{ clickhouse_packages }}"
-      rescue:
-        - name: Get clickhouse distrib rescue
-          ansible.builtin.get_url:
-            url: "https://packages.clickhouse.com/rpm/stable/clickhouse-common-static-{{ clickhouse_version }}.x86_64.rpm"
-            dest: "./clickhouse-common-static-{{ clickhouse_version }}.rpm"
-    - name: Install clickhouse packages
-      become: true
-      ansible.builtin.yum:
-        name:
-          - clickhouse-common-static-{{ clickhouse_version }}.rpm
-          - clickhouse-client-{{ clickhouse_version }}.rpm
-          - clickhouse-server-{{ clickhouse_version }}.rpm
-      notify: Restart clickhouse service
-    - name: Flush handlers
-      ansible.builtin.meta: flush_handlers
-    - name: Create database
-      ansible.builtin.command: "clickhouse-client -q 'create database logs;'"
-      register: create_db
-      failed_when: create_db.rc != 0 and create_db.rc !=82
-      changed_when: create_db.rc == 0
+  roles:
+    - clickhouse
 
 - name: Install Vector
   hosts: vector
-  handlers:
-    - name: Restart Vector service
-      ansible.builtin.service:
-        name: vector
-        state: restarted
-  tasks:
-    - name: Install Vector distrib
-      become: true
-      ansible.builtin.yum:
-        name: "https://packages.timber.io/vector/{{ vector_version }}/vector-{{ vector_version }}-1.{{ arch }}.rpm"
-        state: present
-    - name: Setup vector config
-      become: true
-      ansible.builtin.template:
-        src: vector.yml.j2
-        dest: "/etc/vector/vector.toml"
-        mode: "0644"
-        owner: "{{ ansible_user_id }}"
-        group: "{{ ansible_user_gid }}"
-    - name: Vector systemd
-      become: true
-      ansible.builtin.template:
-        src: vector.service.j2
-        dest: /usr/lib/systemd/system/vector.service
-        mode: "0644"
-        owner: "{{ ansible_user_id }}"
-        group: "{{ ansible_user_gid }}"
-        backup: true
-      notify: Restart Vector service
+  roles:
+    - vector
+    
 
 - name: Install Nginx
   hosts: lighthouse

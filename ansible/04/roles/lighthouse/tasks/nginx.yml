@@ -1,0 +1,19 @@
+---
+- name: Install epel-release
+  become: true
+  ansible.builtin.yum:
+    name: epel-release
+    state: present
+- name: Install nginx
+  become: true
+  ansible.builtin.yum:
+    name: nginx
+    state: present
+  notify: Start-nginx
+- name: Nginx setup config
+  become: true
+  ansible.builtin.template:
+    src: nginx.conf.j2
+    dest: /etc/nginx/nginx.conf
+    mode: "0644"
+  notify: Reload-nginx
