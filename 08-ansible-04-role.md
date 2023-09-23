@@ -18,13 +18,21 @@
 
 1. Создайте в старой версии playbook файл `requirements.yml` и заполните его содержимым:
 
-   ```yaml
-   ---
-     - src: git@github.com:AlexeySetevoi/ansible-clickhouse.git
-       scm: git
-       version: "1.13"
-       name: clickhouse
-   ```
+```yaml
+---
+    - name: clickhouse
+      src: git@github.com:AlexeySetevoi/ansible-clickhouse.git
+      scm: git
+      version: "1.00"
+    - name: vector
+      src: git@github.com:Crankoman/vector-role.git
+      scm: git
+      version: "1.00"
+    - name: lighthouse
+      src: git@github.com:Crankoman/lighthouse-role.git
+      scm: git
+      version: "1.00"
+```
 
 2. При помощи `ansible-galaxy` скачайте себе эту роль.
 3. Создайте новый каталог с ролью при помощи `ansible-galaxy role init vector-role`.
