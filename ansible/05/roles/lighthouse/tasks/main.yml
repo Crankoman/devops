@@ -1,0 +1,11 @@
+---
+# tasks file for lighthouse-role
+
+- name: Install Nginx
+  ansible.builtin.import_tasks: "{{ role_path }}/tasks/nginx.yml"
+
+- name: Install lighthouse
+  ansible.builtin.import_tasks: "{{ role_path }}/tasks/lighthouse.yml"
+
+- name: Flush handlers
+  meta: flush_handlers
