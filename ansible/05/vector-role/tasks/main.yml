@@ -1,0 +1,37 @@
+---
+# tasks file for vector-role
+- name: Fix
+  become: true
+  ansible.builtin.shell: 
+        cmd: sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-Linux-* && sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-Linux-*
+  when: ansible_distribution == 'CentOS'
+- name: Install Vector distrib CentOS
+  become: true
+  ansible.builtin.yum:
+    name: "https://packages.timber.io/vector/{{ vector_version }}/vector-{{ vector_version }}-1.{{ arch }}.rpm"
+    state: present
+    disable_gpg_check: true
+  when: ansible_distribution == 'CentOS'
+- name: Install Vector distrib Ubuntu
+  become: true
+  ansible.builtin.apt:
+    deb: "https://packages.timber.io/vector/{{ vector_version }}/vector_{{ vector_version }}-1_amd64.deb"
+  when: ansible_distribution == 'Ubuntu'
+- name: Setup vector config
+  become: true
+  ansible.builtin.template:
+    src: vector.yml.j2
+    dest: "/etc/vector/vector.toml"
+    mode: "0644"
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_gid }}"
+- name: Vector systemd
+  become: true
+  ansible.builtin.template:
+    src: vector.service.j2
+    dest: /usr/lib/systemd/system/vector.service
+    mode: "0644"
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_gid }}"
+    backup: true
+  notify: Restart Vector service

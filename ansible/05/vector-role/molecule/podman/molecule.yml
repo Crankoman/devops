@@ -1,0 +1,22 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: podman
+platforms:
+  - name: toxtest
+    image: docker.io/aragast/netology:latest
+    pre_build_image: true
+    workdir: /opt/vector_role
+    privileged: true
+provisioner:
+  name: ansible
+verifier:
+  name: ansible
+scenario:
+  test_sequence:
+    - destroy
+    - create
+    - converge
+    - verify
+    - destroy
