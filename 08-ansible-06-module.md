@@ -436,6 +436,8 @@ localhost                  : ok=2    changed=1    unreachable=0    failed=0    s
 
 **Шаг 15.** Установите collection из локального архива: `ansible-galaxy collection install <archivename>.tar.gz`.
 
+<-- Ответ
+
 ```commandline
 ansible-galaxy collection install my_own_namespace-yandex_cloud_elk-1.0.0.tar.gz
 [WARNING]: You are running the development version of Ansible. You should only run Ansible from "devel" if you are modifying the Ansible engine, or trying out
@@ -448,7 +450,11 @@ my_own_namespace.yandex_cloud_elk:1.0.0 was installed successfully
 
 ```
 
+---
+
 **Шаг 16.** Запустите playbook, убедитесь, что он работает.
+
+<-- Ответ
 
 ```commandline
 ansible-playbook test_task.yml
@@ -470,7 +476,14 @@ localhost                  : ok=2    changed=1    unreachable=0    failed=0    s
 
 ```
 
+---
+
 **Шаг 17.** В ответ необходимо прислать ссылки на collection и tar.gz архив, а также скриншоты выполнения пунктов 4, 6, 15 и 16.
 
+<-- Ответ
+
 https://github.com/Crankoman/devops/tree/main/ansible/06
+
 https://github.com/Crankoman/my_own_collection
+
+---
