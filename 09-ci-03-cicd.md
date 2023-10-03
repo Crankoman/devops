@@ -80,7 +80,32 @@ while (index < 10):
    
 2. В него же загрузите такой же артефакт, но с version: 8_102.
 3. Проверьте, что все файлы загрузились успешно.
-4. В ответе пришлите файл `maven-metadata.xml` для этого артефекта.
+4. В ответе пришлите файл `` для этого артефекта.
+
+maven-metadata.xml
+
+<-- Ответ
+
+`maven-metadata.xml`
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata modelVersion="1.1.0">
+  <groupId>netology</groupId>
+  <artifactId>java</artifactId>
+  <versioning>
+    <latest>8_282</latest>
+    <release>8_282</release>
+    <versions>
+      <version>8_102</version>
+      <version>8_282</version>
+    </versions>
+    <lastUpdated>20231003103048</lastUpdated>
+  </versioning>
+</metadata>
+```
+
+---
 
 ### Знакомство с Maven
 
@@ -92,6 +117,19 @@ while (index < 10):
 4. Проверьте `mvn --version`.
 5. Заберите директорию [mvn](./mvn) с pom.
 
+<-- Ответ
+
+```commandline
+sonar@test:~$ mvn --version
+Apache Maven 3.9.4 (dfbb324ad4a7c8fb0bf182e6d91b0ae20e3d2dd9)
+Maven home: /opt/maven
+Java version: 11.0.20.1, vendor: Ubuntu, runtime: /usr/lib/jvm/java-11-openjdk-amd64
+Default locale: en, platform encoding: UTF-8
+OS name: "linux", version: "5.15.0-84-generic", arch: "amd64", family: "unix"
+```
+
+---
+
 ### Основная часть
 
 1. Поменяйте в `pom.xml` блок с зависимостями под ваш артефакт из первого пункта задания для Nexus (java с версией 8_282).
@@ -99,10 +137,52 @@ while (index < 10):
 3. Проверьте директорию `~/.m2/repository/`, найдите ваш артефакт.
 4. В ответе пришлите исправленный файл `pom.xml`.
 
----
+<-- Ответ
 
-### Как оформить решение задания
+```commandline
+[WARNING] JAR will be empty - no content was marked for inclusion!
+[INFO] Building jar: /opt/mnt-homeworks/09-ci-03-cicd/mvn/target/simple-app-1.0-SNAPSHOT.jar
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  7.005 s
+[INFO] Finished at: 2023-10-03T11:57:16Z
+[INFO] ------------------------------------------------------------------------
 
-Выполненное домашнее задание пришлите в виде ссылки на .md-файл в вашем репозитории.
+```
+
+`pom.xml`
+
+```xml
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.netology.app</groupId>
+  <artifactId>simple-app</artifactId>
+  <version>1.0-SNAPSHOT</version>
+   <repositories>
+    <repository>
+      <id>my-repo</id>
+      <name>maven-public</name>
+      <url>http://158.160.71.90:8081/repository/maven-public/</url>
+    </repository>
+  </repositories>
+  <dependencies>
+     <dependency>
+      <groupId>netology</groupId>
+      <artifactId>java</artifactId>
+      <version>8_282</version>
+      <classifier>distrib</classifier>
+      <type>tar.gz</type>
+    </dependency> 
+  </dependencies>
+</project>
+```
+
+```commandline
+ls ~/.m2/repository/
+aopalliance  com  commons-io  javax  net  netology  org
+
+```
 
 ---
