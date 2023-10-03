@@ -25,6 +25,47 @@
 8. Запустите анализатор повторно — проверьте, что QG пройдены успешно.
 9. Сделайте скриншот успешного прохождения анализа, приложите к решению ДЗ.
 
+<-- Ответ
+
+```commandline
+docker run \
+    --rm \
+    -e SONAR_HOST_URL="http://158.160.5.180:9000" \
+    -e SONAR_SCANNER_OPTS="-Dsonar.projectKey=test-py -Dsonar.coverage.exclusions=fail.py" \
+    -e SONAR_LOGIN="56e3a0d8df4a0df068844db6715de9572ffc813f" \
+    -v "/opt/mnt-homeworks/09-ci-03-cicd/example:/usr/src" \
+    sonarsource/sonar-scanner-cli
+```
+
+Результат проверки 1:
+
+![2023-10-03_12-29-42.png](img%2F2023-10-03_12-29-42.png)]
+
+Правим файл fail.py
+
+```python
+index = 0
+
+def increment(index):
+    index += 1
+    return index
+def get_square(numb):
+    return numb*numb
+def print_numb(numb):
+    print("Number is {}".format(numb))
+    pass
+
+while (index < 10):
+    index = increment(index)
+    print(get_square(index))
+
+```
+Результат проверки 2
+
+![2023-10-03_12-31-52.png](img%2F2023-10-03_12-31-52.png)
+
+---
+
 ## Знакомство с Nexus
 
 ### Основная часть
