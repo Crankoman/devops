@@ -142,10 +142,15 @@ jenkins-master-01          : ok=11   changed=9    unreachable=0    failed=0    s
 
 ![screencapture-51-250-29-237-8080-job-freestyle-job-molecule-test-configure-2023-10-06-14_10_31.png](img%2Fscreencapture-51-250-29-237-8080-job-freestyle-job-molecule-test-configure-2023-10-06-14_10_31.png)
 ![2023-10-07_15-05-19.png](img%2F2023-10-07_15-05-19.png)
+
 ---
 
 2. Сделать Declarative Pipeline Job, который будет запускать `molecule test` из любого вашего репозитория с ролью.
+
+<-- Ответ
+
 ![2023-10-07_15-33-38.png](img%2F2023-10-07_15-33-38.png)
+
 ```
 pipeline {
     agent {
@@ -163,12 +168,54 @@ pipeline {
     }
     }
 ```
+
+---
+
 3. Перенести Declarative Pipeline в репозиторий в файл `Jenkinsfile`.
+
+<-- Ответ
+
+https://github.com/Crankoman/devops/blob/main/ci/04/Jenkinsfile
+
+---
+
 4. Создать Multibranch Pipeline на запуск `Jenkinsfile` из репозитория.
+
+<-- Ответ
+
+![2023-10-07_17-24-56.png](img%2F2023-10-07_17-24-56.png)
+
+---
+
 5. Создать Scripted Pipeline, наполнить его скриптом из [pipeline](./pipeline).
+
+
+
+<-- Ответ
+
+---
+
 6. Внести необходимые изменения, чтобы Pipeline запускал `ansible-playbook` без флагов `--check --diff`, если не установлен параметр при запуске джобы (prod_run = True). По умолчанию параметр имеет значение False и запускает прогон с флагами `--check --diff`.
+
+<-- Ответ
+
+---
+
 7. Проверить работоспособность, исправить ошибки, исправленный Pipeline вложить в репозиторий в файл `ScriptedJenkinsfile`.
+
+<-- Ответ
+
+---
+
 8. Отправить ссылку на репозиторий с ролью и Declarative Pipeline и Scripted Pipeline.
+
+
+https://github.com/Crankoman/devops/blob/main/ci/04/Jenkinsfile
+
+
+<-- Ответ
+
+---
 
 ## Необязательная часть
 
