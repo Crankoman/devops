@@ -1,0 +1,15 @@
+pipeline {
+    agent {
+     label 'ansible'
+    }
+    stages {
+        stage('Build') {
+            steps {
+                git branch: 'main', credentialsId: 'c66431e7-973e-460e-9c36-9e166f7a4405', url: 'https://github.com/Crankoman/vector-role'
+
+                sh "molecule test"
+            }
+
+        }
+    }
+}
