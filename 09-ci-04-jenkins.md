@@ -201,7 +201,7 @@ https://github.com/Crankoman/devops/blob/main/ci/04/pipeline/ScriptedJenkinsfile
 
 <-- Ответ
 
-
+![screencapture-158-160-82-72-8080-job-scripted-pipeline-configure-2023-10-07-18_03_54.png](img%2Fscreencapture-158-160-82-72-8080-job-scripted-pipeline-configure-2023-10-07-18_03_54.png)
 
 ---
 
