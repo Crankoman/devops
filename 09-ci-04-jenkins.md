@@ -202,7 +202,7 @@ https://github.com/Crankoman/devops/blob/main/ci/04/pipeline/ScriptedJenkinsfile
 <-- Ответ
 
 ![screencapture-158-160-82-72-8080-job-scripted-pipeline-configure-2023-10-07-18_03_54.png](img%2Fscreencapture-158-160-82-72-8080-job-scripted-pipeline-configure-2023-10-07-18_03_54.png)
-
+![2023-10-07_18-01-17.png](img%2F2023-10-07_18-01-17.png)
 ---
 
 7. Проверить работоспособность, исправить ошибки, исправленный Pipeline вложить в репозиторий в файл `ScriptedJenkinsfile`.
