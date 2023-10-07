@@ -189,15 +189,19 @@ https://github.com/Crankoman/devops/blob/main/ci/04/Jenkinsfile
 
 5. Создать Scripted Pipeline, наполнить его скриптом из [pipeline](./pipeline).
 
-
+https://github.com/Crankoman/devops/blob/main/ci/04/pipeline/ScriptedJenkinsfile
 
 <-- Ответ
 
 ---
 
-6. Внести необходимые изменения, чтобы Pipeline запускал `ansible-playbook` без флагов `--check --diff`, если не установлен параметр при запуске джобы (prod_run = True). По умолчанию параметр имеет значение False и запускает прогон с флагами `--check --diff`.
+6. Внести необходимые изменения, чтобы Pipeline запускал `ansible-playbook` без флагов `--check --diff`, 
+не установлен параметр при запуске джобы (prod_run = True). 
+По умолчанию параметр имеет значение False и запускает прогон с флагами `--check --diff`.
 
 <-- Ответ
+
+
 
 ---
 
@@ -205,27 +209,18 @@ https://github.com/Crankoman/devops/blob/main/ci/04/Jenkinsfile
 
 <-- Ответ
 
+1. внести запись на агенте в /etc/sudoers `jenkins  ALL=(ALL) NOPASSWD:ALL` что бы не запрашивался пароль при sudo
+2. на агенте `mkdir /opt/jdk && ln -s /usr/lib/jvm/java-11-openjdk-11.0.20.0.8-1.el7_9.x86_64 /opt/jdk/openjdk-11`
+
+
 ---
 
 8. Отправить ссылку на репозиторий с ролью и Declarative Pipeline и Scripted Pipeline.
 
 
 https://github.com/Crankoman/devops/blob/main/ci/04/Jenkinsfile
-
+https://github.com/Crankoman/devops/blob/main/ci/04/pipeline/ScriptedJenkinsfile
 
 <-- Ответ
-
----
-
-## Необязательная часть
-
-1. Создать скрипт на groovy, который будет собирать все Job, завершившиеся хотя бы раз неуспешно. Добавить скрипт в репозиторий с решением и названием `AllJobFailure.groovy`.
-2. Создать Scripted Pipeline так, чтобы он мог сначала запустить через Yandex Cloud CLI необходимое количество инстансов, прописать их в инвентори плейбука и после этого запускать плейбук. Мы должны при нажатии кнопки получить готовую к использованию систему.
-
----
-
-### Как оформить решение задания
-
-Выполненное домашнее задание пришлите в виде ссылки на .md-файл в вашем репозитории.
 
 ---
