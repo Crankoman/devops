@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: multitool
+  labels:
+    app: multitool
+spec:
+  containers:
+  - name: multitool
+    image: wbitt/network-multitool
+    env:
+    - name: HTTP_PORT
+      value: "1080"
+    - name: HTTPS_PORT
+      value: "10443"
+    resources:
+      requests:
+        memory: "64Mi"
+        cpu: "250m"
+      limits:
+        memory: "128Mi"
+        cpu: "1"
+---
