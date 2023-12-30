@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: netology-kube2
+  labels:
+    app: netology-kube2
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: netology-kube2
+  template:
+    metadata:
+      labels:
+        app: netology-kube2
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.14.2
+        ports:
+        - containerPort: 80
+          name: http-port
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "250m"
+          limits:
+            memory: "128Mi"
+            cpu: "1"
+      initContainers:
+      - name: delay
+        image: busybox
+        command: ['sh', '-c', 'until nslookup netology-kube2.default.svc.cluster.local; do echo Waiting for netology-kube2; sleep 2; done;']
+---
