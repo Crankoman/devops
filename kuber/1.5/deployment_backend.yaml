@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: netology-kube-backend
+  labels:
+    app: netology-kube-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: netology-kube-backend
+  template:
+    metadata:
+      labels:
+        app: netology-kube-backend
+    spec:
+      containers:
+      - name: multitool
+        image: wbitt/network-multitool
+        env:
+            - name: HTTP_PORT
+              value: "8080"
+        ports:
+        - containerPort: 8080
+          name: http-port
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "250m"
+          limits:
+            memory: "128Mi"
+            cpu: "1"
+---
