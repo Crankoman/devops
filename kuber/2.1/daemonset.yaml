@@ -40,3 +40,4 @@ spec:
       - name: varlog
         hostPath:
           path: /var/log
+---
