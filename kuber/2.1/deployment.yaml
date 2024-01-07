@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: netology-kube
+  labels:
+    app: netology-kube
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: netology-kube
+  template:
+    metadata:
+      labels:
+        app: netology-kube
+    spec:
+      containers:
+      - name: busybox
+        image: busybox
+        command: ['sh', '-c', 'while true; do date >> /output/output.txt; sleep 5; done']
+        volumeMounts:
+        - name: vol
+          mountPath: /output
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "250m"
+          limits:
+            memory: "128Mi"
+            cpu: "1"
+      - name: multitool
+        image: wbitt/network-multitool
+        command: ['sh', '-c', 'while true; do cat /input/output.txt; sleep 10; done']
+        volumeMounts:
+        - name: vol
+          mountPath: /input
+        env:
+            - name: HTTP_PORT
+              value: "8080"
+        ports:
+        - containerPort: 8080
+          name: http-port
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "250m"
+          limits:
+            memory: "128Mi"
+            cpu: "1"
+      volumes:
+      - name: vol
+        emptyDir: {}
+---
