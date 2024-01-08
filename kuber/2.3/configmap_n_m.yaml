@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nm-configmap
+  namespace: default
+data:
+  port_multitool: "8080"
+  index.html: |
+    <html><body><h1>Hello Netology!</h1></body></html>
+---

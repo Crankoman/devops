@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: netology-kube-n
+  labels:
+    app: netology-kube-n
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: netology-kube-n
+  template:
+    metadata:
+      labels:
+        app: netology-kube-n
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.14.2
+        volumeMounts:
+        - mountPath: /usr/share/nginx/html/index.html
+          subPath: index.html
+          name: nginx-page
+        ports:
+        - containerPort: 80
+          name: http-port
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "250m"
+          limits:
+            memory: "128Mi"
+            cpu: "1"
+      volumes:
+      - name: nginx-page
+        configMap:
+          name: n-configmap
+---

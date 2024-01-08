@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: netology-kube
+  labels:
+    app: netology-kube
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: netology-kube
+  template:
+    metadata:
+      labels:
+        app: netology-kube
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.14.2
+        volumeMounts:
+        - mountPath: /usr/share/nginx/html/index.html
+          subPath: index.html
+          name: nginx-page
+        ports:
+        - containerPort: 80
+          name: http-port
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "250m"
+          limits:
+            memory: "128Mi"
+            cpu: "1"
+      - name: multitool
+        image: wbitt/network-multitool
+        env:
+        - name: HTTP_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: nm-configmap
+              key: port_multitool
+        ports:
+        - containerPort: 8080
+          name: http-port
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "250m"
+          limits:
+            memory: "128Mi"
+            cpu: "1"
+      volumes:
+      - name: nginx-page
+        configMap:
+          name: nm-configmap
+---

@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: n-configmap
+  namespace: default
+data:
+  index.html: |
+    <html><body><h1>Hello Netology! SSL</h1></body></html>
+---
