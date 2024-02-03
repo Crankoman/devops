@@ -23,6 +23,6 @@ output "private-instance_ip" {
 #output "nlb_address" {
 #  value = yandex_lb_network_load_balancer.nlb.listener.*.external_address_spec[0].*.address
 #}
-#output "picture_url" {
-#  value = "https://${yandex_storage_bucket.test-bucket.bucket_domain_name}"
-#}
+output "picture_url" {
+  value = "https://${yandex_storage_bucket.test-bucket.bucket_domain_name}"
+}
