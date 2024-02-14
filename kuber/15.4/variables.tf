@@ -14,6 +14,18 @@ variable "default_zone" {
   type    = string
   default = "ru-central1-a"
 }
+variable "a_zone" {
+  type    = string
+  default = "ru-central1-a"
+}
+variable "b_zone" {
+  type    = string
+  default = "ru-central1-b"
+}
+variable "c_zone" {
+  type    = string
+  default = "ru-central1-c"
+}
 
 variable "vm_platform_id" {
   type        = string
@@ -26,7 +38,7 @@ variable "vm_resources" {
   default = {
     "cpu_cores"     = 2
     "memory"        = 2
-    "core_fraction" = 20
+    "core_fraction" = 5
   }
 }
 
