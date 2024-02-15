@@ -3,14 +3,14 @@ resource "yandex_vpc_network" "devops_net" {
 }
 
 resource "yandex_vpc_subnet" "public-subnet-a" {
-  name           = "public"
+  name           = "public-subnet-a"
   zone           = var.default_zone
   network_id     = yandex_vpc_network.devops_net.id
   v4_cidr_blocks = ["192.168.10.0/24"]
 }
 
 resource "yandex_vpc_subnet" "private-subnet-a" {
-  name           = "private"
+  name           = "private-subnet-a"
   zone           = var.default_zone
   network_id     = yandex_vpc_network.devops_net.id
 #  route_table_id = yandex_vpc_route_table.nat-route-table.id
@@ -18,14 +18,14 @@ resource "yandex_vpc_subnet" "private-subnet-a" {
 }
 
 resource "yandex_vpc_subnet" "public-subnet-b" {
-  name           = "public"
+  name           = "public-subnet-b"
   zone           = var.b_zone
   network_id     = yandex_vpc_network.devops_net.id
   v4_cidr_blocks = ["192.168.30.0/24"]
 }
 
 resource "yandex_vpc_subnet" "private-subnet-b" {
-  name           = "private"
+  name           = "private-subnet-b"
   zone           = var.b_zone
   network_id     = yandex_vpc_network.devops_net.id
 #  route_table_id = yandex_vpc_route_table.nat-route-table.id
@@ -33,14 +33,14 @@ resource "yandex_vpc_subnet" "private-subnet-b" {
 }
 
 resource "yandex_vpc_subnet" "public-subnet-c" {
-  name           = "public"
+  name           = "public-subnet-c"
   zone           = var.c_zone
   network_id     = yandex_vpc_network.devops_net.id
   v4_cidr_blocks = ["192.168.50.0/24"]
 }
 
 resource "yandex_vpc_subnet" "private-subnet-c" {
-  name           = "private"
+  name           = "private-subnet-c"
   zone           = var.c_zone
   network_id     = yandex_vpc_network.devops_net.id
 #  route_table_id = yandex_vpc_route_table.nat-route-table.id

@@ -1,7 +1,7 @@
 resource "yandex_mdb_mysql_cluster" "cluster-mysql" {
   name        = "cluster-mysql"
   environment = "PRESTABLE"
-  network_id  = yandex_vpc_network.vpc-network.id
+  network_id  = yandex_vpc_network.devops_net.id
   version     = "8.0"
   backup_window_start {
     hours   = 23
@@ -34,7 +34,7 @@ resource "yandex_mdb_mysql_cluster" "cluster-mysql" {
 
   host {
     zone      = var.c_zone
-    subnet_id = yandex_vpc_subnet.pivate-subnet-c.id
+    subnet_id = yandex_vpc_subnet.private-subnet-c.id
   }
 
   deletion_protection = true
@@ -59,10 +59,10 @@ resource "yandex_mdb_mysql_user" "netology_db" {
     roles         = ["ALL"]
   }
   connection_limits {
-    max_questions_per_hour   = 10
-    max_updates_per_hour     = 20
-    max_connections_per_hour = 30
-    max_user_connections     = 40
+    max_questions_per_hour   = 1000
+    max_updates_per_hour     = 2000
+    max_connections_per_hour = 3000
+    max_user_connections     = 4000
   }
 
   global_permissions = ["PROCESS"]

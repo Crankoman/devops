@@ -18,18 +18,21 @@ spec:
         - name: phpmyadmin
           image: phpmyadmin/phpmyadmin
           resources:
-            limits:
+            requests:
               memory: "128Mi"
-              cpu: "500m"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "1"
           ports:
             - containerPort: 80
           env:
             - name: PMA_HOST
-              value: rc1a-rxi6yvcvfwpt08i7.mdb.yandexcloud.net
+              value: rc1a-i1qrl39bl2mtybmp.mdb.yandexcloud.net
             - name: PMA_PORT
               value: "3306"
             - name: MYSQL_ROOT_PASSWORD
-              value: netology
+              value: netology_db
 
 ---
 apiVersion: v1
