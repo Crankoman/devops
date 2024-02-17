@@ -1,0 +1,67 @@
+<mxfile host="Electron" modified="2024-02-17T20:19:50.007Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/23.1.5 Chrome/120.0.6099.109 Electron/28.1.0 Safari/537.36" etag="NCP_DeFGs-0XYhJ0sc7W" version="23.1.5" type="device">
+  <diagram name="Страница — 1" id="jgMuoLiklqqxECveWCok">
+    <mxGraphModel dx="1219" dy="826" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="XLEj0FDtzoX03DR_FOVe-3" value="&lt;span style=&quot;color: rgba(255, 255, 255, 0.85); font-family: &amp;quot;YS Text&amp;quot;, &amp;quot;Helvetica Neue&amp;quot;, Arial, Helvetica, sans-serif; font-size: 13px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; background-color: rgb(66, 65, 71); text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; float: none; display: inline !important;&quot;&gt;ru-central1-b&lt;/span&gt;" style="rounded=0;whiteSpace=wrap;html=1;dashed=1;align=center;labelPosition=center;verticalLabelPosition=top;verticalAlign=bottom;" vertex="1" parent="1">
+          <mxGeometry x="317" y="40" width="243" height="640" as="geometry" />
+        </mxCell>
+        <mxCell id="XLEj0FDtzoX03DR_FOVe-4" value="&lt;span style=&quot;color: rgba(255, 255, 255, 0.85); font-family: &amp;quot;YS Text&amp;quot;, &amp;quot;Helvetica Neue&amp;quot;, Arial, Helvetica, sans-serif; font-size: 13px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; background-color: rgb(66, 65, 71); text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; float: none; display: inline !important;&quot;&gt;ru-central1-c&lt;/span&gt;" style="rounded=0;whiteSpace=wrap;html=1;align=center;dashed=1;labelPosition=center;verticalLabelPosition=top;verticalAlign=bottom;" vertex="1" parent="1">
+          <mxGeometry x="600" y="40" width="240" height="640" as="geometry" />
+        </mxCell>
+        <mxCell id="XLEj0FDtzoX03DR_FOVe-2" value="&lt;span style=&quot;color: rgba(255, 255, 255, 0.85); font-family: &amp;quot;YS Text&amp;quot;, &amp;quot;Helvetica Neue&amp;quot;, Arial, Helvetica, sans-serif; font-size: 13px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; background-color: rgb(66, 65, 71); text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; float: none; display: inline !important;&quot;&gt;ru-central1-a&lt;/span&gt;" style="rounded=0;whiteSpace=wrap;html=1;dashed=1;align=center;horizontal=1;verticalAlign=bottom;labelPosition=center;verticalLabelPosition=top;" vertex="1" parent="1">
+          <mxGeometry x="40" y="40" width="237" height="640" as="geometry" />
+        </mxCell>
+        <mxCell id="XLEj0FDtzoX03DR_FOVe-8" value="Control plane" style="rounded=1;whiteSpace=wrap;html=1;horizontal=0;align=center;verticalAlign=bottom;labelPosition=left;verticalLabelPosition=middle;labelBackgroundColor=default;glass=0;" vertex="1" parent="1">
+          <mxGeometry x="27" y="62" width="823" height="188" as="geometry" />
+        </mxCell>
+        <mxCell id="XLEj0FDtzoX03DR_FOVe-9" value="Data plane" style="rounded=1;whiteSpace=wrap;html=1;horizontal=0;align=center;verticalAlign=bottom;labelPosition=left;verticalLabelPosition=middle;labelBackgroundColor=default;" vertex="1" parent="1">
+          <mxGeometry x="27" y="310" width="823" height="340" as="geometry" />
+        </mxCell>
+        <mxCell id="XLEj0FDtzoX03DR_FOVe-16" value="VM k8s-master-1" style="rounded=1;whiteSpace=wrap;html=1;verticalAlign=top;align=center;" vertex="1" parent="1">
+          <mxGeometry x="40" y="72" width="240" height="168" as="geometry" />
+        </mxCell>
+        <mxCell id="XLEj0FDtzoX03DR_FOVe-5" value="master node 1" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="120" y="116" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="XLEj0FDtzoX03DR_FOVe-17" value="VM k8s-master-2" style="rounded=1;whiteSpace=wrap;html=1;verticalAlign=top;align=center;" vertex="1" parent="1">
+          <mxGeometry x="320" y="72" width="240" height="168" as="geometry" />
+        </mxCell>
+        <mxCell id="XLEj0FDtzoX03DR_FOVe-19" value="VM k8s-master-3" style="rounded=1;whiteSpace=wrap;html=1;verticalAlign=top;align=center;" vertex="1" parent="1">
+          <mxGeometry x="600" y="72" width="240" height="168" as="geometry" />
+        </mxCell>
+        <mxCell id="XLEj0FDtzoX03DR_FOVe-7" value="master node 3" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="680" y="116" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="XLEj0FDtzoX03DR_FOVe-6" value="master node 2" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="400" y="116" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="XLEj0FDtzoX03DR_FOVe-18" value="VM k8s-master-1" style="rounded=1;whiteSpace=wrap;html=1;verticalAlign=top;align=right;" vertex="1" parent="1">
+          <mxGeometry x="40" y="320" width="240" height="320" as="geometry" />
+        </mxCell>
+        <mxCell id="XLEj0FDtzoX03DR_FOVe-11" value="Worker node 1" style="rounded=0;whiteSpace=wrap;html=1;align=right;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="60" y="345" width="200" height="270" as="geometry" />
+        </mxCell>
+        <mxCell id="XLEj0FDtzoX03DR_FOVe-21" value="VM k8s-master-2" style="rounded=1;whiteSpace=wrap;html=1;verticalAlign=top;align=right;" vertex="1" parent="1">
+          <mxGeometry x="317" y="320" width="240" height="320" as="geometry" />
+        </mxCell>
+        <mxCell id="XLEj0FDtzoX03DR_FOVe-22" value="Worker node 2" style="rounded=0;whiteSpace=wrap;html=1;align=right;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="337" y="345" width="200" height="270" as="geometry" />
+        </mxCell>
+        <mxCell id="XLEj0FDtzoX03DR_FOVe-23" value="VM k8s-master-3" style="rounded=1;whiteSpace=wrap;html=1;verticalAlign=top;align=right;" vertex="1" parent="1">
+          <mxGeometry x="600" y="320" width="240" height="320" as="geometry" />
+        </mxCell>
+        <mxCell id="XLEj0FDtzoX03DR_FOVe-24" value="Worker node 3" style="rounded=0;whiteSpace=wrap;html=1;align=right;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="620" y="345" width="200" height="270" as="geometry" />
+        </mxCell>
+        <mxCell id="XLEj0FDtzoX03DR_FOVe-25" value="" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="360" y="300" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="XLEj0FDtzoX03DR_FOVe-26" value="YC S3" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="880" y="40" width="200" height="200" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
