@@ -31,7 +31,7 @@ resource "yandex_storage_bucket" "s3-backet" {
   depends_on    = [yandex_iam_service_account_static_access_key.tf-key]
 }
 
-# Передаем статические ключи подключения в основной проект terraform
+# Сохраняем статические ключи подключения в основной проект terraform
 resource "local_file" "backend-conf" {
   content    = <<EOT
 access_key = "${yandex_iam_service_account_static_access_key.tf-key.access_key}"
@@ -41,7 +41,7 @@ EOT
   depends_on = [yandex_storage_bucket.s3-backet]
 }
 
-#Генерируем авторизованный ключ для подключения в дальнейшем проекте
+# Генерируем авторизованный ключ для подключения в дальнейшем проекте под учеткой tf-sa
 resource "null_resource" "example" {
   provisioner "local-exec" {
     command = "yc iam key create --folder-name diploma --service-account-name tf-sa --output ../terraform/key.json"
