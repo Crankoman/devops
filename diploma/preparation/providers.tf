@@ -1,3 +1,4 @@
+# Подключаем провайдер YC
 terraform {
   required_providers {
     yandex = {
@@ -7,6 +8,7 @@ terraform {
   required_version = ">=0.13"
 }
 
+# Параметры подключения провайдера YC
 provider "yandex" {
   service_account_key_file = "key.json"
   cloud_id  = var.cloud_id

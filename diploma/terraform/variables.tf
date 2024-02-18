@@ -14,3 +14,7 @@ variable "default_zone" {
   type    = string
   default = "ru-central1-a"
 }
+variable "bucket_name" {
+  type    = string
+  default = "diploma-bucket-mrg"
+}

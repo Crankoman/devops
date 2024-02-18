@@ -10,3 +10,4 @@
 personal.auto.tfvars
 
 key.json
+*.key

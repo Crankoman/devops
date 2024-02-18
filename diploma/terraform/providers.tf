@@ -1,3 +1,4 @@
+# Подключаем провайдер YC
 terraform {
   required_providers {
     yandex = {
@@ -5,11 +6,24 @@ terraform {
     }
   }
   required_version = ">=0.13"
+
+  # Terraform S3 backend
+  backend "s3" {
+    endpoint                    = "storage.yandexcloud.net"
+    bucket                      = var.bucket_name
+    region                      = var.default_zone
+    key                         = "tfstate"
+    skip_region_validation      = true
+    skip_credentials_validation = true
+  }
 }
 
+# Параметры подключения провайдера YC
 provider "yandex" {
-  token     = var.token
+  service_account_key_file = "key.json"
   cloud_id  = var.cloud_id
   folder_id = var.folder_id
   zone      = var.default_zone
 }
+
+
