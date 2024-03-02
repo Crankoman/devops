@@ -1,18 +1,18 @@
 resource "yandex_compute_instance_group" "k8s-workers" {
   name               = "k8s-workers"
-  service_account_id = #берем из файла
+  service_account_id = "ajenrs1pkbilhtdoi0sd"
   depends_on = [
     yandex_compute_instance_group.k8s-masters
   ]
 
   instance_template {
-
-    name = "worker-{instance.index}"
+    platform_id = "standard-v2"
+    name        = "worker-{instance.index}"
 
     resources {
-      cores         = var.vm_resources.cores
-      memory        = var.vm_resources.memory
-      core_fraction = var.vm_resources.core_fraction
+      cores         = var.vm_resources.worker.cores
+      memory        = var.vm_resources.worker.memory
+      core_fraction = var.vm_resources.worker.core_fraction
     }
 
     boot_disk {

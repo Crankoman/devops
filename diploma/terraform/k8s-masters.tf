@@ -1,9 +1,7 @@
 resource "yandex_compute_instance_group" "k8s-masters" {
   name               = "k8s-masters"
-  service_account_id = #берем из файла
+  service_account_id = "ajenrs1pkbilhtdoi0sd"
   depends_on = [
-    yandex_iam_service_account.admin,
-    yandex_resourcemanager_folder_iam_binding.editor,
     yandex_vpc_network.net,
     yandex_vpc_subnet.central1-a,
     yandex_vpc_subnet.central1-b,
@@ -11,13 +9,13 @@ resource "yandex_compute_instance_group" "k8s-masters" {
   ]
 
   instance_template {
-
-    name = "master-{instance.index}"
+    platform_id = "standard-v2"
+    name        = "master-{instance.index}"
 
     resources {
-      cores         = var.vm_resources.cores
-      memory        = var.vm_resources.memory
-      core_fraction = var.vm_resources.core_fraction
+      cores         = var.vm_resources.master.cores
+      memory        = var.vm_resources.master.memory
+      core_fraction = var.vm_resources.master.core_fraction
     }
 
     boot_disk {
@@ -39,7 +37,7 @@ resource "yandex_compute_instance_group" "k8s-masters" {
     }
 
     metadata = {
-      ssh-keys = "ubuntu:${file("~/.ssh/id_rsa.pub")}"
+      ssh-keys = "devops:${file("~/.ssh/id_rsa.pub")}"
     }
 
     scheduling_policy {

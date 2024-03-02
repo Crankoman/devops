@@ -40,20 +40,19 @@ variable "vm_resources" {
   type = map(any)
   default = {
     default = {
-      "cpu_cores"     = 2
+      "cores"     = 2
       "memory"        = 2
       "core_fraction" = 20
     }
     master = {
-      "cpu_cores"     = 2
+      "cores"     = 2
       "memory"        = 2
       "core_fraction" = 20
     }
     worker = {
-      "cpu_cores"     = 2
+      "cores"     = 2
       "memory"        = 2
       "core_fraction" = 20
     }
   }
 }
-

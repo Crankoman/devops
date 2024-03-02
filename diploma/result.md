@@ -412,9 +412,281 @@ Apply complete! Resources: 4 added, 0 changed, 0 destroyed.
 ---
 ### 1
 
-Для создание k8s-кластера нам потребуются создать по 3-и master и worker ноды размещенные в разных расположениях в соответсвии со схемой. Так же портебуется настроить маршрутизацацию для доступа к разным сегментам сети.
+Для создание k8s-кластера нам потребуются создать по 3-и master и worker ноды размещенные в разных расположениях в соответсвии со схемой.
 
-Подготовим соответсвующие манифесты развертывания ВМ и развернем ноды с помощью Ansible.
+используем манифесты `./terraform/k8s-masters.tf` и `./terraform/k8s-workers.tf`
+
+Подготовим соответсвующие манифесты развертывания ВМ
+
+`terraform apply --auto-approve`
+<details>
+    <summary>подробнее</summary>
+
+```shell
+Terraform used the selected providers to generate the following execution plan. Resource actions are indicated with the following
+symbols:
+  + create
+
+Terraform will perform the following actions:
+
+  # yandex_compute_instance_group.k8s-masters will be created
+  + resource "yandex_compute_instance_group" "k8s-masters" {
+      + created_at          = (known after apply)
+      + deletion_protection = false
+      + folder_id           = (known after apply)
+      + id                  = (known after apply)
+      + instances           = (known after apply)
+      + name                = "k8s-masters"
+      + service_account_id  = "ajenrs1pkbilhtdoi0sd"
+      + status              = (known after apply)
+
+      + allocation_policy {
+          + zones = [
+              + "ru-central1-a",
+              + "ru-central1-b",
+              + "ru-central1-d",
+            ]
+        }
+
+      + deploy_policy {
+          + max_creating     = 3
+          + max_deleting     = 3
+          + max_expansion    = 3
+          + max_unavailable  = 3
+          + startup_duration = 0
+          + strategy         = (known after apply)
+        }
+
+      + instance_template {
+          + labels      = (known after apply)
+          + metadata    = {
+              + "ssh-keys" = <<-EOT
+                    ubuntu:ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCwcK6AMVsw1RoPhjWyhAjSF2DMPWG/O8aFcAVWVBkEsY+pKrpegYgeU8c203BdBmOwPZJrhIQ3eTzguD68q2CHUk7kg4xk6pFGhrWbLTinX3LYY9gbL9v4wcPqJIb5hlGMNzDb9FhqzUVYsc5hMoxu7LBqDXFL95L7t0mmWcTiFjtacz4rbEY3OqsdYTcTkV4DemgKnQxweqg7wz7RVozXB4fM835CRnrmCrA2MSOVEh8gmRjRI0luHAANJM1J/wJYOiVvFL8RTpgKQAiifdztdAX+Ho0z5Ckd/hqljjosFxs2lbPQJOeoxrpNOUQJyXl8OmiRi9n9Wu5WFSACYMzp+1zSKdo51TWwR52eVwhB0JUQ/asX9FdtGSDExBgJfjGTMIjSecCIbp+xDVBv4lSPTeqhtZ8a7gEf5P/+ndbeMox3HZeVa8KjSBKvNDIB5p4NKU+gZUBm5VDsgRAqmShNq22mYxcv9pC9kLmxOCZ1iK4xCS1db5vmLVJMIfiX3F0= devops@4SER-1670916090.4server.su
+                EOT
+            }
+          + name        = "master-{instance.index}"
+          + platform_id = "standard-v2"
+
+          + boot_disk {
+              + device_name = (known after apply)
+              + mode        = "READ_WRITE"
+
+              + initialize_params {
+                  + image_id    = "fd8vmcue7aajpmeo39kk"
+                  + size        = 10
+                  + snapshot_id = (known after apply)
+                  + type        = "network-ssd"
+                }
+            }
+
+          + network_interface {
+              + ip_address   = (known after apply)
+              + ipv4         = true
+              + ipv6         = (known after apply)
+              + ipv6_address = (known after apply)
+              + nat          = true
+              + network_id   = (known after apply)
+              + subnet_ids   = (known after apply)
+            }
+
+          + network_settings {
+              + type = "STANDARD"
+            }
+
+          + resources {
+              + core_fraction = 20
+              + cores         = 2
+              + memory        = 2
+            }
+
+          + scheduling_policy {
+              + preemptible = true
+            }
+        }
+
+      + scale_policy {
+          + fixed_scale {
+              + size = 3
+            }
+        }
+    }
+
+  # yandex_compute_instance_group.k8s-workers will be created
+  + resource "yandex_compute_instance_group" "k8s-workers" {
+      + created_at          = (known after apply)
+      + deletion_protection = false
+      + folder_id           = (known after apply)
+      + id                  = (known after apply)
+      + instances           = (known after apply)
+      + name                = "k8s-workers"
+      + service_account_id  = "ajenrs1pkbilhtdoi0sd"
+      + status              = (known after apply)
+
+      + allocation_policy {
+          + zones = [
+              + "ru-central1-a",
+              + "ru-central1-b",
+              + "ru-central1-d",
+            ]
+        }
+
+      + deploy_policy {
+          + max_creating     = 3
+          + max_deleting     = 3
+          + max_expansion    = 3
+          + max_unavailable  = 3
+          + startup_duration = 0
+          + strategy         = (known after apply)
+        }
+
+      + instance_template {
+          + labels      = (known after apply)
+          + metadata    = {
+              + "ssh-keys" = <<-EOT
+                    ubuntu:ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCwcK6AMVsw1RoPhjWyhAjSF2DMPWG/O8aFcAVWVBkEsY+pKrpegYgeU8c203BdBmOwPZJrhIQ3eTzguD68q2CHUk7kg4xk6pFGhrWbLTinX3LYY9gbL9v4wcPqJIb5hlGMNzDb9FhqzUVYsc5hMoxu7LBqDXFL95L7t0mmWcTiFjtacz4rbEY3OqsdYTcTkV4DemgKnQxweqg7wz7RVozXB4fM835CRnrmCrA2MSOVEh8gmRjRI0luHAANJM1J/wJYOiVvFL8RTpgKQAiifdztdAX+Ho0z5Ckd/hqljjosFxs2lbPQJOeoxrpNOUQJyXl8OmiRi9n9Wu5WFSACYMzp+1zSKdo51TWwR52eVwhB0JUQ/asX9FdtGSDExBgJfjGTMIjSecCIbp+xDVBv4lSPTeqhtZ8a7gEf5P/+ndbeMox3HZeVa8KjSBKvNDIB5p4NKU+gZUBm5VDsgRAqmShNq22mYxcv9pC9kLmxOCZ1iK4xCS1db5vmLVJMIfiX3F0= devops@4SER-1670916090.4server.su
+                EOT
+            }
+          + name        = "worker-{instance.index}"
+          + platform_id = "standard-v2"
+
+          + boot_disk {
+              + device_name = (known after apply)
+              + mode        = "READ_WRITE"
+
+              + initialize_params {
+                  + image_id    = "fd8vmcue7aajpmeo39kk"
+                  + size        = 10
+                  + snapshot_id = (known after apply)
+                  + type        = "network-hdd"
+                }
+            }
+
+          + network_interface {
+              + ip_address   = (known after apply)
+              + ipv4         = true
+              + ipv6         = (known after apply)
+              + ipv6_address = (known after apply)
+              + nat          = true
+              + network_id   = (known after apply)
+              + subnet_ids   = (known after apply)
+            }
+
+          + network_settings {
+              + type = "STANDARD"
+            }
+
+          + resources {
+              + core_fraction = 20
+              + cores         = 2
+              + memory        = 2
+            }
+
+          + scheduling_policy {
+              + preemptible = true
+            }
+        }
+
+      + scale_policy {
+          + fixed_scale {
+              + size = 3
+            }
+        }
+    }
+
+  # yandex_vpc_network.net will be created
+  + resource "yandex_vpc_network" "net" {
+      + created_at                = (known after apply)
+      + default_security_group_id = (known after apply)
+      + folder_id                 = "b1gfdkd3hs1u4b3d75ri"
+      + id                        = (known after apply)
+      + labels                    = (known after apply)
+      + name                      = "net"
+      + subnet_ids                = (known after apply)
+    }
+
+  # yandex_vpc_subnet.central1-a will be created
+  + resource "yandex_vpc_subnet" "central1-a" {
+      + created_at     = (known after apply)
+      + folder_id      = (known after apply)
+      + id             = (known after apply)
+      + labels         = (known after apply)
+      + name           = "central1-a"
+      + network_id     = (known after apply)
+      + v4_cidr_blocks = [
+          + "10.0.1.0/24",
+        ]
+      + v6_cidr_blocks = (known after apply)
+      + zone           = "ru-central1-a"
+    }
+
+  # yandex_vpc_subnet.central1-b will be created
+  + resource "yandex_vpc_subnet" "central1-b" {
+      + created_at     = (known after apply)
+      + folder_id      = (known after apply)
+      + id             = (known after apply)
+      + labels         = (known after apply)
+      + name           = "central1-b"
+      + network_id     = (known after apply)
+      + v4_cidr_blocks = [
+          + "10.0.2.0/24",
+        ]
+      + v6_cidr_blocks = (known after apply)
+      + zone           = "ru-central1-b"
+    }
+
+  # yandex_vpc_subnet.central1-d will be created
+  + resource "yandex_vpc_subnet" "central1-d" {
+      + created_at     = (known after apply)
+      + folder_id      = (known after apply)
+      + id             = (known after apply)
+      + labels         = (known after apply)
+      + name           = "central1-d"
+      + network_id     = (known after apply)
+      + v4_cidr_blocks = [
+          + "10.0.3.0/24",
+        ]
+      + v6_cidr_blocks = (known after apply)
+      + zone           = "ru-central1-d"
+    }
+
+Plan: 6 to add, 0 to change, 0 to destroy.
+yandex_vpc_network.net: Creating...
+yandex_vpc_network.net: Creation complete after 3s [id=enp56a0vgtukgrdbn5eg]
+yandex_vpc_subnet.central1-b: Creating...
+yandex_vpc_subnet.central1-d: Creating...
+yandex_vpc_subnet.central1-a: Creating...
+yandex_vpc_subnet.central1-d: Creation complete after 1s [id=fl8lmj5itik89fh5h80h]
+yandex_vpc_subnet.central1-b: Creation complete after 1s [id=e2l9epbaacbd13psbqtg]
+yandex_vpc_subnet.central1-a: Creation complete after 2s [id=e9b91ppl0kqlkofgmhsi]
+yandex_compute_instance_group.k8s-masters: Creating...
+yandex_compute_instance_group.k8s-masters: Still creating... [10s elapsed]
+yandex_compute_instance_group.k8s-masters: Still creating... [20s elapsed]
+yandex_compute_instance_group.k8s-masters: Still creating... [30s elapsed]
+yandex_compute_instance_group.k8s-masters: Still creating... [40s elapsed]
+yandex_compute_instance_group.k8s-masters: Still creating... [50s elapsed]
+yandex_compute_instance_group.k8s-masters: Still creating... [1m0s elapsed]
+yandex_compute_instance_group.k8s-masters: Creation complete after 1m2s [id=cl1vq9u9mmqhkg07kdd5]
+yandex_compute_instance_group.k8s-workers: Creating...
+yandex_compute_instance_group.k8s-workers: Still creating... [10s elapsed]
+yandex_compute_instance_group.k8s-workers: Still creating... [20s elapsed]
+yandex_compute_instance_group.k8s-workers: Still creating... [30s elapsed]
+yandex_compute_instance_group.k8s-workers: Still creating... [40s elapsed]
+yandex_compute_instance_group.k8s-workers: Still creating... [50s elapsed]
+yandex_compute_instance_group.k8s-workers: Still creating... [1m0s elapsed]
+yandex_compute_instance_group.k8s-workers: Creation complete after 1m3s [id=cl1dn707mvt814othmh6]
+
+Apply complete! Resources: 6 added, 0 changed, 0 destroyed.
+```
+</details>
+
+
+Развернем ноды с помощью Ansible. Его манифесты находятся в `./ansible`
+
+`git clone https://github.com/kubernetes-sigs/kubespray/`
+python3 -m pip install --upgrade pip
+pip3 install -r requirements.txt
+
+
 
 Готовим ВМ и сети для него.
 

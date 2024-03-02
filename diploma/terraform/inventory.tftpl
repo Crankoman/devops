@@ -1,0 +1,31 @@
+all:
+  hosts:
+    control:
+      ansible_host: ${control_ext_ip}
+      ip: ${control_int_ip}
+    node1:
+      ansible_host: ${node1_ext_ip}
+      ip: ${node1_int_ip}
+    node2:
+      ansible_host: ${node2_ext_ip}
+      ip: ${node2_int_ip}
+  children:
+    kube_control_plane:
+      hosts:
+        control:
+    kube_node:
+      hosts:
+        node1:
+        node2:
+    etcd:
+      hosts:
+        control:
+    k8s_cluster:
+      children:
+        kube_control_plane:
+        kube_node:
+    calico_rr:
+      hosts: {}
+  vars:
+    ansible_user: ubuntu
+    supplementary_addresses_in_ssl_keys: ["${control_ext_ip}"]
