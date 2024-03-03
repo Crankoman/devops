@@ -682,13 +682,12 @@ Apply complete! Resources: 6 added, 0 changed, 0 destroyed.
 
 Развернем ноды с помощью Ansible. Его манифесты находятся в `./ansible`
 
-`git clone https://github.com/kubernetes-sigs/kubespray/`
+wget https://github.com/kubernetes-sigs/kubespray/archive/refs/tags/v2.21.0.tar.gz
+tar -xvzf v2.21.0.tar.gz
+mv kubespray-2.21.0 kubespray
 python3 -m pip install --upgrade pip
-pip3 install -r requirements.txt
+pip3 install -r kubespray/requirements.txt
 
-
-
-Готовим ВМ и сети для него.
 
 
 ---
