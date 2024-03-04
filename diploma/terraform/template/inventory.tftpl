@@ -1,9 +1,9 @@
 [all]
 %{ for ip in masters ~}
-master-${index(masters, ip) + 1} ansible_host=${ip[1]} ip=${ip[0]} etcd_member_name=etcd${index(masters, ip) + 1}
+master-${index(masters, ip) + 1} ansible_host=${ip[1]} ip=${ip[0]} etcd_member_name=etcd${index(masters, ip) + 1} ansible_user=ubuntu
 %{ endfor ~}
 %{ for ip in workers ~}
-worker-${index(workers, ip) + 1} ansible_host=${ip[1]} ip=${ip[0]}
+worker-${index(workers, ip) + 1} ansible_host=${ip[1]} ip=${ip[0]} ansible_user=ubuntu
 %{ endfor ~}
 
 [kube_control_plane]
