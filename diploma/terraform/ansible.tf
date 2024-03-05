@@ -2,7 +2,7 @@
 
 resource "null_resource" "kubespray_init" {
   provisioner "local-exec" {
-    command = "cp -r ../ansible/kubespray/inventory/sample/. ../ansible/kubespray/inventory/k8s"
+    command = "cp -rfp ../ansible/kubespray/inventory/sample/. ../ansible/kubespray/inventory/mycluster"
   }
 }
 
@@ -17,7 +17,7 @@ resource "local_file" "inventory" {
     masters = [for v in yandex_compute_instance_group.k8s-masters.instances : [v.network_interface.0.ip_address, v.network_interface.0.nat_ip_address]]
     workers = [for v in yandex_compute_instance_group.k8s-workers.instances : [v.network_interface.0.ip_address, v.network_interface.0.nat_ip_address]]
   })
-  filename = "../ansible/kubespray/inventory/k8s/inventory.ini"
+  filename = "../ansible/kubespray/inventory/mycluster/inventory.ini"
   depends_on = [
     null_resource.kubespray_init,
     yandex_compute_instance_group.k8s-masters,
@@ -29,7 +29,7 @@ resource "local_file" "inventory" {
 
 resource "null_resource" "kubeconfig" {
   provisioner "local-exec" {
-    command = "echo 'kubeconfig_localhost: true' >> ../ansible/kubespray/inventory/k8s/group_vars/k8s_cluster/k8s-cluster.yml"
+    command = "cd ../ansible/kubespray/inventory/mycluster/group_vars/k8s_cluster/ && echo -e 'kubeconfig_localhost: true\nkubeconfig_localhost_ansible_host: true\nkubectl_localhost: true' >> k8s-cluster.yml"
   }
   depends_on = [
     local_file.inventory
@@ -60,14 +60,14 @@ resource "null_resource" "timeout_k8s_start_workers" {
   }
 }
 
-# запускаем kubesprey
-resource "null_resource" "ansible_provisioner" {
-  depends_on = [
-    null_resource.timeout_k8s_start_masters,
-    null_resource.timeout_k8s_start_workers,
-  ]
-
-  provisioner "local-exec" {
-    command = "cd ../ansible/kubespray && ansible-playbook -i inventory/k8s/inventory.ini cluster.yml -b -v"
-  }
-}
+## запускаем kubesprey
+#resource "null_resource" "ansible_provisioner" {
+#  depends_on = [
+#    null_resource.timeout_k8s_start_masters,
+#    null_resource.timeout_k8s_start_workers,
+#  ]
+#
+#  provisioner "local-exec" {
+#    command = "cd ../ansible/kubespray && ansible-playbook -i inventory/k8s/inventory.ini cluster.yml --become --become-user=root -vv"
+#  }
+#}
