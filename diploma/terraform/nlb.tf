@@ -54,5 +54,5 @@ resource "yandex_lb_network_load_balancer" "nlb-testapp" {
       }
     }
   }
-  depends_on = [yandex_lb_target_group.networkbalancer-group]
+  depends_on = [yandex_lb_network_load_balancer.nlb-grafana]
 }
