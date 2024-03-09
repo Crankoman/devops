@@ -79,7 +79,7 @@ resource "null_resource" "ansible_provisioner" {
 }
 
 # копируем kubeconfig
-resource "null_resource" "kubeconfig" {
+resource "null_resource" "kubeconfig_cp" {
   provisioner "local-exec" {
     command = "mkdir -p ~/.kube && cp ../ansible/kubespray/inventory/mycluster/artifacts/admin.conf ~/.kube/config"
   }
