@@ -1,0 +1,14 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: testapp-service
+spec:
+  selector:
+    app: webapp
+  ports:
+    - name: nginx-http
+      protocol: TCP
+      port: 80
+      nodePort: 8080
+  type: NodePort

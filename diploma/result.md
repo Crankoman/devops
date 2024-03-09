@@ -486,7 +486,101 @@ kube-system   nodelocaldns-zrjwx                         1/1     Running   0    
 ---
 ### 3. Создание тестового приложения
 
-Создадим отдельны репозиторий для тестого приложения [отдельный репозиторий для тестого приложения](https://github.com/Crankoman/testapp)
+Создадим отдельны репозиторий для тестого приложения [отдельный репозиторий для тестого приложения](https://github.com/Crankoman/testapp). Раместим там страницу и Docker-файл создающий конетейнер с nginx, который отображает ее.
+
+
+напишем набор bash команд, которые скопируют из репозитория файлы, соберут образ и запушат их в dockerhub.
+
+<details>
+    <summary>подробнее</summary>
+
+Скачиваем подготовленный репозитарий
+
+```shell
+git clone https://github.com/Crankoman/testapp
+Cloning into 'testapp'...
+remote: Enumerating objects: 6, done.
+remote: Counting objects: 100% (6/6), done.
+remote: Compressing objects: 100% (5/5), done.
+remote: Total 6 (delta 0), reused 6 (delta 0), pack-reused 0
+Receiving objects: 100% (6/6), done.
+
+cd testapp/
+```
+
+Проверяем версию докера (который поставил ранее), и авторизиовывемся в dockerhub
+
+```shell
+docker --version
+Docker version 25.0.4, build 1a576c5
+
+docker login
+Log in with your Docker ID or email address to push and pull images from Docker Hub. If you don't have a Docker ID, head over to https://hub.docker.com/ to create one.
+You can log in with your password or a Personal Access Token (PAT). Using a limited-scope PAT grants better security and is required for organizations using SSO. Learn more at https://docs.docker.com/go/access-tokens/
+
+Username: crankoman
+Password:
+WARNING! Your password will be stored unencrypted in /home/devops/.docker/config.json.
+Configure a credential helper to remove this warning. See
+https://docs.docker.com/engine/reference/commandline/login/#credentials-store
+
+Login Succeeded
+```
+
+Билдим образ и пушим в докерхаб
+
+```shell
+sudo docker build -t crankoman/testapp:v1.0.0 .
+[+] Building 27.1s (8/8) FINISHED                                                                                                                  docker:default
+ => [internal] load build definition from Dockerfile                                                                                                         0.3s
+ => => transferring dockerfile: 89B                                                                                                                          0.0s
+ => [internal] load metadata for docker.io/library/nginx:latest                                                                                              4.0s
+ => [auth] library/nginx:pull token for registry-1.docker.io                                                                                                 0.0s
+ => [internal] load .dockerignore                                                                                                                            0.2s
+ => => transferring context: 2B                                                                                                                              0.0s
+ => [internal] load build context                                                                                                                            0.4s
+ => => transferring context: 1.28kB                                                                                                                          0.0s
+ => [1/2] FROM docker.io/library/nginx:latest@sha256:c26ae7472d624ba1fafd296e73cecc4f93f853088e6a9c13c0d52f6ca5865107                                       21.2s
+ => => resolve docker.io/library/nginx:latest@sha256:c26ae7472d624ba1fafd296e73cecc4f93f853088e6a9c13c0d52f6ca5865107                                        0.3s
+ => => sha256:88f6f236f401ac07aa5309d8ade2b0c9d24b9f526bd4e73311bf5c1787cfd49c 41.39MB / 41.39MB                                                             9.6s
+ => => sha256:c26ae7472d624ba1fafd296e73cecc4f93f853088e6a9c13c0d52f6ca5865107 9.85kB / 9.85kB                                                               0.0s
+ => => sha256:e4720093a3c1381245b53a5a51b417963b3c4472d3f47fc301930a4f3b17666a 7.04kB / 7.04kB                                                               0.0s
+ => => sha256:05aa73005987caaed48ea8213696b0df761ccd600d2c53fc0a1a97a180301d71 2.29kB / 2.29kB                                                               0.0s
+ => => sha256:e1caac4eb9d2ec24aa3618e5992208321a92492aef5fef5eb9e470895f771c56 29.12MB / 29.12MB                                                             8.7s
+ => => sha256:c3ea3344e711fd7111dee02f17deebceb725ed1d0ee998f7fb472114dc1399ce 629B / 629B                                                                   1.0s
+ => => sha256:cc1bb4345a3a849289cfb3e2471c096f374423ec1ef74766137b9de546498612 957B / 957B                                                                   1.3s
+ => => sha256:da8fa4352481b358fc60d40ee20d92da64124d2cf405115640d45980339f47e5 394B / 394B                                                                   1.8s
+ => => sha256:c7f80e9cdab20387cd09e3c47121ef0eb531043cf0aca1a52aab659de3ccb704 1.21kB / 1.21kB                                                               2.1s
+ => => sha256:18a869624cb60aaa916942dc71c22b194a078dcbbb9b8f54d40512eba55f70b8 1.40kB / 1.40kB                                                               2.4s
+ => => extracting sha256:e1caac4eb9d2ec24aa3618e5992208321a92492aef5fef5eb9e470895f771c56                                                                    4.4s
+ => => extracting sha256:88f6f236f401ac07aa5309d8ade2b0c9d24b9f526bd4e73311bf5c1787cfd49c                                                                    4.1s
+ => => extracting sha256:c3ea3344e711fd7111dee02f17deebceb725ed1d0ee998f7fb472114dc1399ce                                                                    0.0s
+ => => extracting sha256:cc1bb4345a3a849289cfb3e2471c096f374423ec1ef74766137b9de546498612                                                                    0.0s
+ => => extracting sha256:da8fa4352481b358fc60d40ee20d92da64124d2cf405115640d45980339f47e5                                                                    0.0s
+ => => extracting sha256:c7f80e9cdab20387cd09e3c47121ef0eb531043cf0aca1a52aab659de3ccb704                                                                    0.0s
+ => => extracting sha256:18a869624cb60aaa916942dc71c22b194a078dcbbb9b8f54d40512eba55f70b8                                                                    0.0s
+ => [2/2] COPY content /usr/share/nginx/html                                                                                                                 1.0s
+ => exporting to image                                                                                                                                       0.2s
+ => => exporting layers                                                                                                                                      0.1s
+ => => writing image sha256:190d0aaf1d28b2390eb27406e54ee7930840245bd65edc53463128d58b933fca                                                                 0.0s
+ => => naming to docker.io/crankoman/testapp:v1.0.0  
+```
+
+```shell
+sudo docker push crankoman/testapp:v1.0.0
+The push refers to repository [docker.io/crankoman/testapp]
+5926c692aecb: Pushed
+61a7fb4dabcd: Mounted from library/nginx
+bcc6856722b7: Mounted from library/nginx
+188d128a188c: Mounted from library/nginx
+7d52a4114c36: Mounted from library/nginx
+3137f8f0c641: Mounted from library/nginx
+84619992a45b: Mounted from library/nginx
+ceb365432eec: Mounted from library/nginx
+v1.0.0: digest: sha256:086af7bac23a5bc38d0d433c0f6d71744e47520ce3c063ee23c75bb6867f0a7a size: 1985
+```
+
+</details>
 
 ---
 ### 4. Подготовка cистемы мониторинга и деплой приложения
