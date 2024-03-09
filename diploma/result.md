@@ -414,7 +414,7 @@ Apply complete! Resources: 4 added, 0 changed, 0 destroyed.
 
 Для создание k8s-кластера нам потребуются создать по 3-и master и worker ноды размещенные в разных расположениях в соответсвии со схемой.
 
-используем манифесты `./terraform/k8s-masters.tf` и `./terraform/k8s-workers.tf` `ansible.tf`. Которые поднимут ВМ и через kubespray развернут кластер.
+используем манифесты `./terraform/k8s-masters.tf` и `./terraform/k8s-workers.tf` `./terraform/ansible.tf`. Которые поднимут ВМ и через kubespray развернут кластер.
 
 Установим kubespray, он будет находится в `./ansible/kubespray`
 
@@ -428,24 +428,65 @@ pip3 install -r kubespray/requirements.txt
 
 Запустим `terraform apply --auto-approve` (не буду приводить листинг)
 
-После проверим `kubectl get pods --all-namespaces`
+Проверим кластер
 
 <details>
     <summary>подробнее</summary>
 
 ```shell
-kubectl get pods --all-namespaces
+kubectl get nodes -A -owide
+NAME       STATUS   ROLES           AGE   VERSION   INTERNAL-IP   EXTERNAL-IP   OS-IMAGE           KERNEL-VERSION     CONTAINER-RUNTIME
+master-1   Ready    control-plane   36m   v1.25.6   10.0.1.5      <none>        Ubuntu 20.04 LTS   5.4.0-26-generic   containerd://1.6.15
+master-2   Ready    control-plane   35m   v1.25.6   10.0.2.33     <none>        Ubuntu 20.04 LTS   5.4.0-26-generic   containerd://1.6.15
+master-3   Ready    control-plane   35m   v1.25.6   10.0.3.31     <none>        Ubuntu 20.04 LTS   5.4.0-26-generic   containerd://1.6.15
+worker-1   Ready    <none>          32m   v1.25.6   10.0.1.27     <none>        Ubuntu 20.04 LTS   5.4.0-26-generic   containerd://1.6.15
+worker-2   Ready    <none>          32m   v1.25.6   10.0.2.32     <none>        Ubuntu 20.04 LTS   5.4.0-26-generic   containerd://1.6.15
+worker-3   Ready    <none>          32m   v1.25.6   10.0.3.18     <none>        Ubuntu 20.04 LTS   5.4.0-26-generic   containerd://1.6.15
+
+kubectl get pods -A -owide
+NAMESPACE     NAME                                       READY   STATUS    RESTARTS      AGE   IP               NODE       NOMINATED NODE   READINESS GATES
+kube-system   calico-kube-controllers-75748cc9fd-cvk52   1/1     Running   0             29m   10.233.125.65    worker-3   <none>           <none>
+kube-system   calico-node-4zh7w                          1/1     Running   0             31m   10.0.3.18        worker-3   <none>           <none>
+kube-system   calico-node-74xz9                          1/1     Running   0             31m   10.0.3.31        master-3   <none>           <none>
+kube-system   calico-node-kc5c8                          1/1     Running   0             31m   10.0.2.33        master-2   <none>           <none>
+kube-system   calico-node-lcb8t                          1/1     Running   0             31m   10.0.1.27        worker-1   <none>           <none>
+kube-system   calico-node-qx7jh                          1/1     Running   0             31m   10.0.1.5         master-1   <none>           <none>
+kube-system   calico-node-v4fz8                          1/1     Running   0             31m   10.0.2.32        worker-2   <none>           <none>
+kube-system   coredns-588bb58b94-blqlg                   1/1     Running   0             28m   10.233.80.65     master-3   <none>           <none>
+kube-system   coredns-588bb58b94-sx9js                   1/1     Running   0             27m   10.233.118.129   master-1   <none>           <none>
+kube-system   dns-autoscaler-5b9959d7fc-9jrx5            1/1     Running   0             27m   10.233.78.65     master-2   <none>           <none>
+kube-system   kube-apiserver-master-1                    1/1     Running   1             36m   10.0.1.5         master-1   <none>           <none>
+kube-system   kube-apiserver-master-2                    1/1     Running   1             35m   10.0.2.33        master-2   <none>           <none>
+kube-system   kube-apiserver-master-3                    1/1     Running   1             34m   10.0.3.31        master-3   <none>           <none>
+kube-system   kube-controller-manager-master-1           1/1     Running   1             36m   10.0.1.5         master-1   <none>           <none>
+kube-system   kube-controller-manager-master-2           1/1     Running   1             35m   10.0.2.33        master-2   <none>           <none>
+kube-system   kube-controller-manager-master-3           1/1     Running   2 (30m ago)   34m   10.0.3.31        master-3   <none>           <none>
+kube-system   kube-proxy-9tjwt                           1/1     Running   0             32m   10.0.1.27        worker-1   <none>           <none>
+kube-system   kube-proxy-bp2k2                           1/1     Running   0             32m   10.0.2.33        master-2   <none>           <none>
+kube-system   kube-proxy-gtr2p                           1/1     Running   0             32m   10.0.3.18        worker-3   <none>           <none>
+kube-system   kube-proxy-nkkmj                           1/1     Running   0             32m   10.0.3.31        master-3   <none>           <none>
+kube-system   kube-proxy-pzrmj                           1/1     Running   0             32m   10.0.1.5         master-1   <none>           <none>
+kube-system   kube-proxy-r8fff                           1/1     Running   0             32m   10.0.2.32        worker-2   <none>           <none>
+kube-system   kube-scheduler-master-1                    1/1     Running   1             36m   10.0.1.5         master-1   <none>           <none>
+kube-system   kube-scheduler-master-2                    1/1     Running   2 (30m ago)   35m   10.0.2.33        master-2   <none>           <none>
+kube-system   kube-scheduler-master-3                    1/1     Running   1             34m   10.0.3.31        master-3   <none>           <none>
+kube-system   nginx-proxy-worker-1                       1/1     Running   0             31m   10.0.1.27        worker-1   <none>           <none>
+kube-system   nginx-proxy-worker-2                       1/1     Running   0             31m   10.0.2.32        worker-2   <none>           <none>
+kube-system   nginx-proxy-worker-3                       1/1     Running   0             31m   10.0.3.18        worker-3   <none>           <none>
+kube-system   nodelocaldns-ckb45                         1/1     Running   0             27m   10.0.1.5         master-1   <none>           <none>
+kube-system   nodelocaldns-fgq4z                         1/1     Running   0             27m   10.0.1.27        worker-1   <none>           <none>
+kube-system   nodelocaldns-hk8hn                         1/1     Running   0             27m   10.0.2.33        master-2   <none>           <none>
+kube-system   nodelocaldns-kzlkd                         1/1     Running   0             27m   10.0.3.31        master-3   <none>           <none>
+kube-system   nodelocaldns-tz8sb                         1/1     Running   0             27m   10.0.2.32        worker-2   <none>           <none>
+kube-system   nodelocaldns-zrjwx                         1/1     Running   0             27m   10.0.3.18        worker-3   <none>           <none>
 
 ```
 </details>
 
-
-
-
-
-
 ---
 ### 3. Создание тестового приложения
+
+Создадим отдельны репозиторий для тестого приложения [отдельны репозиторий для тестого приложения](https://github.com/Crankoman/testapp)
 
 ---
 ### 4. Подготовка cистемы мониторинга и деплой приложения
