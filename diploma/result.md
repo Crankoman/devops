@@ -599,7 +599,7 @@ Resolving deltas: 100% (13159/13159), done.
 cd kube-prometheus
 ```
 
-Развернем его в кластере
+Развернем его в кластере продублируем код в `./terraform/monitoring.tf`
 
 ```shell
 kubectl apply --server-side -f manifests/setup
@@ -647,7 +647,6 @@ customresourcedefinition.apiextensions.k8s.io/scrapeconfigs.monitoring.coreos.co
 customresourcedefinition.apiextensions.k8s.io/servicemonitors.monitoring.coreos.com condition met
 customresourcedefinition.apiextensions.k8s.io/thanosrulers.monitoring.coreos.com condition met
 
-kubectl apply -f manifests/
 kubectl apply -f manifests/
 alertmanager.monitoring.coreos.com/main created
 networkpolicy.networking.k8s.io/alertmanager-main created
