@@ -10,5 +10,6 @@ spec:
     - name: nginx-http
       protocol: TCP
       port: 80
-      nodePort: 8080
+      nodePort: 30102
+      targetPort: 80
   type: NodePort

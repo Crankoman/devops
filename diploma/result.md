@@ -764,10 +764,9 @@ servicemonitor.monitoring.coreos.com/prometheus-operator created
 
 ```
 
-Подготовим network_load_balancer для доступа к grafana и testapp
-`./terraform/nlb.tf`
+Подготовим network_load_balancer для доступа к grafana и testapp `./terraform/nlb.tf`
 
-Развернем в k8s тестовое приложение
+настроим развертывание в k8s тестового приложения `./terraform/nlb.tf`
 
 
 ---

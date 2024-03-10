@@ -26,6 +26,7 @@ resource "null_resource" "kubespray_init" {
   provisioner "local-exec" {
     command = "cp -rfp ../ansible/kubespray/inventory/sample/. ../ansible/kubespray/inventory/mycluster"
   }
+  
 }
 
 # наполняем inventory для kubesprey

@@ -7,3 +7,12 @@ resource "null_resource" "monitoring" {
     null_resource.kubeconfig_cp
   ]
 }
+# разворачиваем kube-prometheus сервис
+resource "null_resource" "monitoring_service" {
+  provisioner "local-exec" {
+    command = "kubectl apply -f ../k8s/service-grafana.yaml"
+  }
+  depends_on = [
+    null_resource.monitoring
+  ]
+}
