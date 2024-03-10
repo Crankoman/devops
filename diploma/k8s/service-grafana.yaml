@@ -9,7 +9,7 @@ spec:
   ports:
     - name: grafana-http
       protocol: TCP
-      nodePort: 30102
+      nodePort: 30101
       port: 3000
       targetPort: 3000
   type: NodePort
