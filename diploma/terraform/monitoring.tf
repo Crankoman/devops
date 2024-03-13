@@ -1,7 +1,7 @@
 # разворачиваем kube-prometheus 
 resource "null_resource" "grafana_deployment" {
   provisioner "local-exec" {
-    command = "cd ../kube-prometheus/ && kubectl apply --server-side -f manifests/setup && kubectl wait --for condition=Established --all CustomResourceDefinition --namespace=monitoring && kubectl apply -f manifests/"
+    command = "helm repo add prometheus-community https://prometheus-community.github.io/helm-charts && helm repo update && helm install prometheus-stack  prometheus-community/kube-prometheus-stack"
   }
   depends_on = [
     null_resource.ansible_provisioner

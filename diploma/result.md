@@ -567,17 +567,18 @@ sudo docker build -t crankoman/testapp:v1.0.0 .
 ```
 
 ```shell
-sudo docker push crankoman/testapp:v1.0.0
+sudo docker tag crankoman/testapp:v1.0.0 crankoman/testapp:latest
+sudo docker push crankoman/testapp:latest
 The push refers to repository [docker.io/crankoman/testapp]
-5926c692aecb: Pushed
-61a7fb4dabcd: Mounted from library/nginx
-bcc6856722b7: Mounted from library/nginx
-188d128a188c: Mounted from library/nginx
-7d52a4114c36: Mounted from library/nginx
-3137f8f0c641: Mounted from library/nginx
-84619992a45b: Mounted from library/nginx
-ceb365432eec: Mounted from library/nginx
-v1.0.0: digest: sha256:086af7bac23a5bc38d0d433c0f6d71744e47520ce3c063ee23c75bb6867f0a7a size: 1985
+5926c692aecb: Layer already exists 
+61a7fb4dabcd: Layer already exists 
+bcc6856722b7: Layer already exists 
+188d128a188c: Layer already exists 
+7d52a4114c36: Layer already exists 
+3137f8f0c641: Layer already exists 
+84619992a45b: Layer already exists 
+ceb365432eec: Layer already exists 
+latest: digest: sha256:086af7bac23a5bc38d0d433c0f6d71744e47520ce3c063ee23c75bb6867f0a7a size: 1985
 ```
 
 </details>
