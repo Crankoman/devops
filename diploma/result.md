@@ -586,25 +586,14 @@ latest: digest: sha256:086af7bac23a5bc38d0d433c0f6d71744e47520ce3c063ee23c75bb68
 ---
 ### 4. Подготовка cистемы мониторинга и деплой приложения
 
-Скопируем [репозиторий kube-prometheus](https://github.com/prometheus-operator/kube-prometheus)
 
-```shell
-git clone https://github.com/prometheus-operator/kube-prometheus
-Cloning into 'kube-prometheus'...
-remote: Enumerating objects: 19363, done.
-remote: Counting objects: 100% (5825/5825), done.
-remote: Compressing objects: 100% (469/469), done.
-remote: Total 19363 (delta 5569), reused 5440 (delta 5330), pack-reused 13538
-Receiving objects: 100% (19363/19363), 10.21 MiB | 6.14 MiB/s, done.
-Resolving deltas: 100% (13159/13159), done.
-cd kube-prometheus
-```
-
-Развернем его в кластере продублируем код в `./terraform/monitoring.tf`
+Развернем его в кластере продублируем код в `./terraform/monitoring.tf` используя helm и поднимим сервис  `./k8s/service-grafana.yaml`
 
 Подготовим network_load_balancer для доступа к grafana и testapp `./terraform/nlb.tf`
 
 настроим развертывание в k8s тестового приложения `./terraform/app.tf`
+
+Проверим доступность:
 
 
 ---
