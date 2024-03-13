@@ -5,7 +5,7 @@ metadata:
   name: grafana-service
 spec:
   selector:
-    name: grafana
+    app.kubernetes.io/name: grafana
   ports:
     - name: grafana-http
       protocol: TCP

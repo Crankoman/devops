@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: testapp
-          image: doc
+          image: crankoman/testapp:latest
           ports:
             - containerPort: 80
           resources:

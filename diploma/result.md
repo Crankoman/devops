@@ -593,8 +593,14 @@ latest: digest: sha256:086af7bac23a5bc38d0d433c0f6d71744e47520ce3c063ee23c75bb68
 
 настроим развертывание в k8s тестового приложения `./terraform/app.tf`
 
-Проверим доступность:
+Проверим доступность по IP балансировщиков:
 
+Мониторинг Входим в Grafana по порту 3000 admin/prom-operator, открываем дашборд Kubernetes / Compute Resources / Cluster
+
+![Grafana](../img/2024-03-13_22-07-07.png)
+
+Приложение по порту 80
+![testapp](../img/2024-03-13_22-00-59.png)
 
 ---
 ### 5. Установка и настройка CI/CD
