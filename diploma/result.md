@@ -611,13 +611,22 @@ http://158.160.154.147/
 
 `./terraform/cicd.tf`
 
-Создадим репозиторий на GitLab и перенеем туда код приложения 
+Создадим [репозиторий](https://gitlab.com/crankoman/testapp) на GitLab и перенеем туда код приложения 
 
 Устанавливаем агента 
 
 ![](../img/2024-03-13_23-52-50.png)
 
 прописываем в `./terraform/cicd.tf`
-gi
+
+Настриваем [GitLab CI](https://gitlab.com/crankoman/testapp/-/blob/main/.gitlab-ci.yml?ref_type=heads) и прописываем $REGISTRY_PASSWORD $REGISTRY_USER в GitLab
+
+[добавляем Helm в приложение](https://gitlab.com/crankoman/testapp/-/tree/main/deploy?ref_type=heads) 
+
+[Пример build без тэга](https://gitlab.com/crankoman/testapp/-/jobs/6396652987)
+[Пример build с тэгом и последующий deploy в kubernetes](https://gitlab.com/crankoman/testapp/-/pipelines/1213945845)
+
+Видим что [приложение](http://158.160.154.147/) обновилось 
+![Скриншот](../img/2024-03-14_20-25-35.png)
 
 ---
