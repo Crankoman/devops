@@ -599,10 +599,25 @@ latest: digest: sha256:086af7bac23a5bc38d0d433c0f6d71744e47520ce3c063ee23c75bb68
 
 ![Grafana](../img/2024-03-13_22-07-07.png)
 
+http://158.160.149.6:3000/d/efa86fd1d0c121a26444b636a3f509a8/kubernetes-compute-resources-cluster?orgId=1&refresh=10s
+
 Приложение по порту 80
 ![testapp](../img/2024-03-13_22-00-59.png)
 
+http://158.160.154.147/
+
 ---
 ### 5. Установка и настройка CI/CD
+
+`./terraform/cicd.tf`
+
+Создадим репозиторий на GitLab и перенеем туда код приложения 
+
+Устанавливаем агента 
+
+![](../img/2024-03-13_23-52-50.png)
+
+прописываем в `./terraform/cicd.tf`
+gi
 
 ---
